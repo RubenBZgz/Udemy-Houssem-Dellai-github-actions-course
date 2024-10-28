@@ -1,0 +1,23 @@
+name: AA-rotate-terraformHCP-token
+
+on:
+  schedule:
+    - cron: "0 0 1 * *" # Runs on the 1st of every month. 30 days of expiration time
+
+  # Allows you to run this workflow manually from the Actions tab 
+  workflow_dispatch:
+
+jobs:
+  rotate-token:
+    runs-on: ubuntu-latest
+
+    # Inside my workspace, I'm going to use a Team Token for GitHub Actions.
+    # In my case, It uses owners team, however, you should create a new team with limitations.
+    steps:
+      - name: Rotate Terraform API Token
+        run: |
+          # Example of how you could interact with the Terraform API to rotate the token
+          # and then update the GitHub secret with the new token.
+          OLD_TOKEN= ${{ secrets.TF_API_TOKEN }} 
+          NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/${{ secrets.BACKEND_ORGANIZATION }}/authentication-tokens -H "Authorization: Bearer OLD_TOKEN" | jq .new_token)
+          gh secret set TF_API_TOKEN -b "$NEW_TOKEN"
