@@ -27,8 +27,8 @@ jobs:
         run: |
           # Example of how you could interact with the Terraform API to rotate the token
           # and then update the GitHub secret with the new token.
-          BACKEND_ORGANIZATION=$BACKEND_ORGANIZATION
-          OLD_TOKEN=$OLD_TOKEN
+          BACKEND_ORGANIZATION="Prueba"
+          OLD_TOKEN="$OLD_TOKEN"
           AUTH_HEADER="Authorization: Bearer $OLD_TOKEN"
           NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/authentication-tokens -H "$AUTH_HEADER" | jq .new_token)
 
