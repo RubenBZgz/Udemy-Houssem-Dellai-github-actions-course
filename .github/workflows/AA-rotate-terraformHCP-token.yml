@@ -7,6 +7,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab 
   workflow_dispatch:
 
+  
+env:
+  # All of this are backend settings
+  BACKEND_ORGANIZATION: ${{ secrets.BACKEND_ORGANIZATION }}
+  OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
+
 jobs:
   rotate-token:
     runs-on: ubuntu-latest
@@ -18,8 +24,8 @@ jobs:
         run: |
           # Example of how you could interact with the Terraform API to rotate the token
           # and then update the GitHub secret with the new token.
-          BACKEND_ORGANIZATION=${{ secrets.BACKEND_ORGANIZATION }}
-          OLD_TOKEN= ${{ secrets.TF_API_TOKEN }} 
+          BACKEND_ORGANIZATION=$BACKEND_ORGANIZATION
+          OLD_TOKEN=$OLD_TOKEN
           AUTH_HEADER="Authorization: Bearer $OLD_TOKEN"
           NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/authentication-tokens -H "$AUTH_HEADER" | jq .new_token)
 
