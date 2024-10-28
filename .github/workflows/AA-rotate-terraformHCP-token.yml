@@ -22,4 +22,14 @@ jobs:
           OLD_TOKEN= ${{ secrets.TF_API_TOKEN }} 
           AUTH_HEADER="Authorization: Bearer $OLD_TOKEN"
           NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/authentication-tokens -H "$AUTH_HEADER" | jq .new_token)
-          gh secret set TF_API_TOKEN -b "$NEW_TOKEN"
+
+          # Check if the new token was successfully retrieved
+          if [ -n "$NEW_TOKEN" ]; then
+            # Update GitHub secret with the new token
+            gh secret set TF_API_TOKEN -b "$NEW_TOKEN"
+            echo "GitHub secret updated successfully."
+          else
+            echo "Failed to retrieve new token."
+            exit 1
+          fi
+          
