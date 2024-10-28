@@ -15,6 +15,9 @@ jobs:
     # Inside my workspace, I'm going to use a Team Token for GitHub Actions.
     # In my case, It uses owners team, however, you should create a new team with limitations.
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
       - name: Rotate Terraform API Token
         env: 
           BACKEND_ORGANIZATION: ${{ secrets.BACKEND_ORGANIZATION }}
