@@ -206,13 +206,12 @@ jobs:
         continue-on-error: true
 
       - name: Terraform Plan
-        id: plan
         env:
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-        if: github.event_name == 'pull_request' # 'push' #
+        #i f: github.event_name == 'pull_request' # 'push' #
         run: |
           terraform plan -no-color 
           # terraform plan -out tfplan -no-color 
@@ -229,9 +228,8 @@ jobs:
 
       # Terraform login is not necessary as we are using TF_TOKEN_app_terraform_io secret
       - name: Add Terraform Plan Comment
-        id: comment
         uses: actions/github-script@v7.0.0
-        if: github.event_name == 'pull_request' # 'push'
+        #i f: github.event_name == 'pull_request' # 'push'
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         with:
