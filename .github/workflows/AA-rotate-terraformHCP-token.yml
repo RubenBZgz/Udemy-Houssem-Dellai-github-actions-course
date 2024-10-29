@@ -26,6 +26,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@master
+      
+      - name: Curl Prueba
+        env:
+          BACKEND_ORGANIZATION: ${{ secrets.BACKEND_ORGANIZATION }}
+          OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+          TOKEN_PRUEBA: ${{ env.PRUEBA }}
+
+        run: |
+          TOKEN=$TOKEN_PRUEBA
+          echo "TOKEN PRUEBA: $TOKEN"
+          curl \
+            --header "Authorization: Bearer $TOKEN" \
+            --header "Content-Type: application/vnd.api+json" \
+            --request GET \
+            https://app.terraform.io/api/v2/organizations/my-organization/teams
 
       - name: Rotate Terraform API Token
         env:
