@@ -161,7 +161,7 @@ jobs:
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
-        #if: ${{ env.BACKEND_TYPE == 'hcp' }}
+        if: ${{ env.BACKEND_TYPE == 'none' }}
         run: |
           if [ ! -f ./backend.tf ]; then
             echo "backend.tf not found!"
