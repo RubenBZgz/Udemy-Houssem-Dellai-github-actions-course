@@ -4,11 +4,20 @@ on:
   schedule:
     - cron: "0 0 1 * *" # Runs on the 1st of every month. 30 days of expiration time
 
-  # Allows you to run this workflow manually from the Actions tab 
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-  
 jobs:
+  check-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PAT Validity
+        env:
+          MY_PAT: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+        run: |
+          curl -H "Authorization: token $MY_PAT" https://api.github.com/user || exit 1
+
+
   rotate-token:
     runs-on: ubuntu-latest
 
@@ -19,7 +28,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Rotate Terraform API Token
-        env: 
+        env:
           BACKEND_ORGANIZATION: ${{ secrets.BACKEND_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
@@ -41,4 +50,3 @@ jobs:
             echo "Failed to retrieve new token."
             exit 1
           fi
-          
