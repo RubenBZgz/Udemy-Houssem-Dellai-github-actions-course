@@ -1,25 +1,34 @@
-name: 'Create Infra with Terraform'
+name: "Create Infra with Terraform"
 
 on:
   push:
-    branches: [ Personal ]
+    branches: [Personal]
     paths: .github/workflows/terraform-devops.yml
   pull_request:
-    branches:  none # [ main ]
+    branches: none # [ main ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  
+    inputs:
+      backend:
+        description: "Choose the backend to use (azurerm or hcp)"
+        required: true
+        default: "hcp"
+        type: choice
+        options:
+          - azurerm
+          - hcp
+
 env:
   # All of this are backend settings
   BACKEND_STORAGE_ACCOUNT_NAME: ${{ secrets.BACKEND_STORAGE_ACCOUNT_NAME }}
   BACKEND_RESOURCE_GROUP_NAME: ${{ secrets.BACKEND_RESOURCE_GROUP_NAME }}
   BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER_NAME }}
   BACKEND_KEY: ${{ secrets.BACKEND_KEY }}
-  BACKEND_ORGANIZATION: ${{ secrets.BACKEND_ORGANIZATION }}
-  BACKEND_WORKSPACES: ${{ secrets.BACKEND_WORKSPACES }}
-  
+  HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
+  HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
+
   WORKING_DIRECTORY: 05_Web_Sql_database
-  
+
 jobs:
   scan-terraform-config:
     runs-on: ubuntu-latest
@@ -44,7 +53,7 @@ jobs:
           # config_file: path/this_file
           # baseline: cloudformation/.checkov.baseline # optional: Path to a generated baseline file. Will only report results not in the baseline.
           # container_user: 1000 # optional: Define what UID and / or what GID to run the container under to prevent permission issues
- 
+
   deploy-azure-infra-terraform:
     name: Deploy to Azure with Terraform
     runs-on: ubuntu-latest
@@ -58,199 +67,209 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v2
-                
-    - name: Login to Azure with Service Principal
-      uses: Azure/login@v2
-      with:
-        # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
-        # az role assignment create --assignee <service-principal-id> --role Contributor --scope /subscriptions/<subscription-id>
-        # creds: ${#{ secrets.AZURE_CREDENTIALS }}
-        auth-type: SERVICE_PRINCIPAL
-        creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
-        #client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        #client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-        #tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        #subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      
-    
-    - name: Azure CLI script
-      uses: azure/cli@v2
-      with:
-        azcliversion: 2.30.0
-        inlineScript: |
-          az account show
-          az storage -h
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Create Terraform backend state storage
-      uses: Azure/cli@v2
-      with:
-        # Azure CLI version to be used to execute the script. If not provided, latest version is used
-        # azcliversion: 2.34.1 # optional, default is agentazcliversion
-        # #!/usr/bin/env pwsh
-        
-        # Ejecutado en BASH
-        inlineScript: |
-          az version
+      - name: Login to Azure with Service Principal
+        uses: Azure/login@v2
+        with:
+          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+          # az role assignment create --assignee <service-principal-id> --role Contributor --scope /subscriptions/<subscription-id>
+          # creds: ${#{ secrets.AZURE_CREDENTIALS }}
+          auth-type: SERVICE_PRINCIPAL
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+          #client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          #client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          #tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          #subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-          echo 'Create Resource Group'
-          exist=$(az group exists --name $BACKEND_RESOURCE_GROUP_NAME)
-          echo "Existe: $exist"
-          if [ "$exist"="false" ]; then
-            az group create --name $BACKEND_RESOURCE_GROUP_NAME --location westeurope
-          else 
-            az group show --name $BACKEND_RESOURCE_GROUP_NAME
-          fi
-          
-          
-          echo 'Create storage account'
-          exist=$(az storage account show --name $BACKEND_STORAGE_ACCOUNT_NAME --resource-group $BACKEND_RESOURCE_GROUP_NAME)
-          echo "Existe: $exist"
-          if [ -z "$exist" ]; then
-            az storage account create --name $BACKEND_STORAGE_ACCOUNT_NAME \
-              --resource-group $BACKEND_RESOURCE_GROUP_NAME \
-              --sku Standard_LRS \
-              --encryption-services blob
-          else 
-            az storage account show --name $BACKEND_STORAGE_ACCOUNT_NAME --resource-group $BACKEND_RESOURCE_GROUP_NAME
-          fi
-          
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az account show
+            az storage -h
 
-          echo 'Create Blob container'
-          exist=$(az storage container show --name $BACKEND_CONTAINER_NAME --account-name $BACKEND_STORAGE_ACCOUNT_NAME)
-          if [ -z "$exist" ]; then
-            az storage container create \
-              --resource-group $BACKEND_RESOURCE_GROUP_NAME \
-              --account-name $BACKEND_STORAGE_ACCOUNT_NAME \
-              --name $BACKEND_CONTAINER_NAME 
-          else 
-            az storage container show \
-              --account-name $BACKEND_STORAGE_ACCOUNT_NAME \
-              --name $BACKEND_CONTAINER_NAME 
-          fi
-          
-          # generate backend.tf file
-          # cd $WORKING_DIRECTORY
+      # Install the latest version of Terraform CLI
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3.1.0
+
+      - name: Terraform Login
+        id: login
+        run: |
+          terrafrom login
+
+      # AzureRM Backend Configuration
+      - name: AzureRM Terraform Backend
+        uses: Azure/cli@v2
+        if: ${{ github.event.inputs.backend == 'azurerm' }}
+        with:
+          # Azure CLI version to be used to execute the script. If not provided, latest version is used
+          # azcliversion: 2.34.1 # optional, default is agentazcliversion
+          # #!/usr/bin/env pwsh
+
+          # Ejecutado en BASH
+          inlineScript: |
+            az version
+
+            echo 'Create Resource Group'
+            exist=$(az group exists --name $BACKEND_RESOURCE_GROUP_NAME)
+            echo "Existe: $exist"
+            if [ "$exist"="false" ]; then
+              az group create --name $BACKEND_RESOURCE_GROUP_NAME --location westeurope
+            else 
+              az group show --name $BACKEND_RESOURCE_GROUP_NAME
+            fi
+
+
+            echo 'Create storage account'
+            exist=$(az storage account show --name $BACKEND_STORAGE_ACCOUNT_NAME --resource-group $BACKEND_RESOURCE_GROUP_NAME)
+            echo "Existe: $exist"
+            if [ -z "$exist" ]; then
+              az storage account create --name $BACKEND_STORAGE_ACCOUNT_NAME \
+                --resource-group $BACKEND_RESOURCE_GROUP_NAME \
+                --sku Standard_LRS \
+                --encryption-services blob
+            else 
+              az storage account show --name $BACKEND_STORAGE_ACCOUNT_NAME --resource-group $BACKEND_RESOURCE_GROUP_NAME
+            fi
+
+
+            echo 'Create Blob container'
+            exist=$(az storage container show --name $BACKEND_CONTAINER_NAME --account-name $BACKEND_STORAGE_ACCOUNT_NAME)
+            if [ -z "$exist" ]; then
+              az storage container create \
+                --resource-group $BACKEND_RESOURCE_GROUP_NAME \
+                --account-name $BACKEND_STORAGE_ACCOUNT_NAME \
+                --name $BACKEND_CONTAINER_NAME 
+            else 
+              az storage container show \
+                --account-name $BACKEND_STORAGE_ACCOUNT_NAME \
+                --name $BACKEND_CONTAINER_NAME 
+            fi
+
+            # generate backend.tf file
+            # cd $WORKING_DIRECTORY
+            if [ ! -f ./backend.tf ]; then
+              echo "backend.tf not found!"
+
+
+              cat <<EOT > backend.tf
+            terraform {
+              backend "azurerm" {
+                resource_group_name   = "$BACKEND_RESOURCE_GROUP_NAME"
+                storage_account_name  = "$BACKEND_STORAGE_ACCOUNT_NAME"
+                container_name        = "$BACKEND_CONTAINER_NAME"
+                key                   = "$BACKEND_KEY"
+              } 
+            }
+            EOT
+              
+              cat backend.tf
+
+            fi
+
+      # HCP Terraform Backend Configuration
+      - name: HCP Terraform Backend
+        if: ${{ github.event.inputs.backend == 'hcp' }}
+        run: |
           if [ ! -f ./backend.tf ]; then
             echo "backend.tf not found!"
-          
+
 
             cat <<EOT > backend.tf
           terraform {
-            # NORMAL AZURE BACKEND HARDCODED
-            /* backend "azurerm" {
-              resource_group_name   = "$BACKEND_RESOURCE_GROUP_NAME"
-              storage_account_name  = "$BACKEND_STORAGE_ACCOUNT_NAME"
-              container_name        = "$BACKEND_CONTAINER_NAME"
-              key                   = "$BACKEND_KEY"
-            } */
-
-            # Terraform Cloud Backend
             cloud {
-              organization = "$BACKEND_ORGANIZATION"
+              organization = "$HCP_ORGANIZATION"
 
               workspaces {
-                name = "$BACKEND_WORKSPACES"
+                name = "$HCP_WORKSPACE"
               }
             }
           }
           EOT
             
             cat backend.tf
-          
+
           fi
 
-    # Install the latest version of Terraform CLI
-    - name: Install Terraform
-      uses: hashicorp/setup-terraform@v3.1.0
-    
-    - name: Terraform Login
-      id: login
-      run: |
-        terrafrom login 
-    
-    - name: Terraform Init
-      id: init
-      env:
-        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      run: |
-        # Initialize a new or existing Terraform working directory by creating initial files, 
-        # loading any remote state, downloading modules, etc.
-        terraform init
-        
-        # Either use the backend.tf file with the config inside or use the following command line
-        # terraform init -backend-config="storage_account_name=$BACKEND_STORAGE_ACCOUNT_NAME" \
-        #                -backend-config="container_name=$BACKEND_CONTAINER_NAME" \
-        #                -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
-  
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      id: format
-      run: terraform fmt -check
-      continue-on-error: true
 
-    - name: Terraform Plan
-      id: plan
-      env:
-        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      if: github.event_name == 'pull_request' # 'push' # 
-      run: |
-        terraform plan -no-color 
-        # terraform plan -out tfplan -no-color 
-        
-        # # show the tfplan file
-        # terraform show -json tfplan
-        # terraform show -json tfplan >> tfplan.json
-        # # Format tfplan.json file
-        # terraform show -json tfplan | jq '.' > tfplan.json
-        # 
-        # # show only the changes
-        # cat tfplan.json | jq '[.resource_changes[] | {type: .type, name: .change.after.name, actions: .change.actions[]}]' 
-        # cat tfplan.json | jq -r '(.resource_changes[] | [.change.actions[], .type, .change.after.name]) | @tsv'
-
-    - name: Add Terraform Plan Comment
-      id: comment
-      uses: actions/github-script@v7.0.0
-      if: github.event_name == 'pull_request' # 'push'
-      env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const output = `#### Terraform Format and Style 🖌\`${{ steps.format.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Validation 🤖${{ steps.validate.outputs.stdout }}
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-      
-          <details><summary>Show Plan</summary>
-          
-          \`\`\`${process.env.PLAN}\`\`\`
-          
-          </details>
-          
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+      - name: Terraform Init
+        run: |
+          # Initialize a new or existing Terraform working directory by creating initial files, 
+          # loading any remote state, downloading modules, etc.
+          terraform init
             
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          })
-        
-    # On push to main, build or change infrastructure according to Terraform configuration files
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      env:
-        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      run: terraform apply -auto-approve
+          # Either use the backend.tf file with the config inside or use the following command line
+          # terraform init -backend-config="storage_account_name=$BACKEND_STORAGE_ACCOUNT_NAME" \
+          #                -backend-config="container_name=$BACKEND_CONTAINER_NAME" \
+          #                -backend-config="resource_group_name=$RESOURCE_GROUP_NAME"
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        id: format
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Plan
+        id: plan
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        if: github.event_name == 'pull_request' # 'push' #
+        run: |
+          terraform plan -no-color 
+          # terraform plan -out tfplan -no-color 
+
+          # # show the tfplan file
+          # terraform show -json tfplan
+          # terraform show -json tfplan >> tfplan.json
+          # # Format tfplan.json file
+          # terraform show -json tfplan | jq '.' > tfplan.json
+          # 
+          # # show only the changes
+          # cat tfplan.json | jq '[.resource_changes[] | {type: .type, name: .change.after.name, actions: .change.actions[]}]' 
+          # cat tfplan.json | jq -r '(.resource_changes[] | [.change.actions[], .type, .change.after.name]) | @tsv'
+
+      - name: Add Terraform Plan Comment
+        id: comment
+        uses: actions/github-script@v7.0.0
+        if: github.event_name == 'pull_request' # 'push'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.format.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖${{ steps.validate.outputs.stdout }}
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`${process.env.PLAN}\`\`\`
+
+            </details>
+
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+              
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        run: terraform apply -auto-approve
