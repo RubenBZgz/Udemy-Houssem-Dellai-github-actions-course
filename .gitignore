@@ -9,8 +9,8 @@
 *.tfstate.*
 
 # tfplan files
-#*tfplan
-#*tfplan.json
+*tfplan
+*tfplan.json
 
 # Backend files 
 backend.tf
