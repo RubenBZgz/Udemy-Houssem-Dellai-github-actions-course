@@ -19,14 +19,6 @@ on:
           - hcp
 
 env:
-  # All of this are backend settings
-  BACKEND_STORAGE_ACCOUNT_NAME: ${{ secrets.BACKEND_STORAGE_ACCOUNT_NAME }}
-  BACKEND_RESOURCE_GROUP_NAME: ${{ secrets.BACKEND_RESOURCE_GROUP_NAME }}
-  BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER_NAME }}
-  BACKEND_KEY: ${{ secrets.BACKEND_KEY }}
-  HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
-  HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
-
   WORKING_DIRECTORY: 05_Web_Sql_database
 
 jobs:
@@ -101,6 +93,12 @@ jobs:
       # AzureRM Backend Configuration
       - name: AzureRM Terraform Backend
         uses: Azure/cli@v2
+        env:
+          # All of this are backend settings
+          BACKEND_STORAGE_ACCOUNT_NAME: ${{ secrets.BACKEND_STORAGE_ACCOUNT_NAME }}
+          BACKEND_RESOURCE_GROUP_NAME: ${{ secrets.BACKEND_RESOURCE_GROUP_NAME }}
+          BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER_NAME }}
+          BACKEND_KEY: ${{ secrets.BACKEND_KEY }}
         if: ${{ github.event.inputs.backend == 'azurerm' }}
         with:
           # Azure CLI version to be used to execute the script. If not provided, latest version is used
@@ -170,6 +168,9 @@ jobs:
 
       # HCP Terraform Backend Configuration
       - name: HCP Terraform Backend
+        env:
+          HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
+          HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
         if: ${{ github.event.inputs.backend == 'hcp' }}
         run: |
           if [ ! -f ./backend.tf ]; then
