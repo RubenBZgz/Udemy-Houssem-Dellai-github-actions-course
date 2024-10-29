@@ -59,7 +59,7 @@ jobs:
             https://app.terraform.io/api/v2/teams/$team_id/authentication-token)
 
           echo "RESPONSE: $RESPONSE"
-          token_id=$(echo "$RESPONSE" | jq -r '.data.id')
+          token_id=$(echo "$RESPONSE" | jq -r '.data.attributes.token')
           echo "token_id ID: $token_id"
 
 
