@@ -13,8 +13,8 @@
 *tfplan.json
 
 # Backend files (It's not necessary in this case because I use Terraform Cloud)
-# *backend.tf
-# *backend.tfvars
+*backend.tf
+*backend.tfvars
 
 # Private Keys or Sensitive Files
 *.pem
