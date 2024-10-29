@@ -192,7 +192,11 @@ jobs:
         run: |
           # Initialize a new or existing Terraform working directory by creating initial files, 
           # loading any remote state, downloading modules, etc.
-          cat backend.tf
+          if [ ! -f ./backend.tf ]; then
+            echo "backend.tf not found!"
+          else
+            cat backend.tf
+          fi
           terraform init
 
       # Checks that all Terraform configuration files adhere to a canonical format
