@@ -47,18 +47,21 @@ jobs:
             --header "Content-Type: application/vnd.api+json" \
             --request GET https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams)
           
-            echo "RESPONSE: $RESPONSE"
+          echo "RESPONSE: $RESPONSE"
 
           # Use jq to parse and get the value of "id"
           team_id=$(echo "$RESPONSE" | jq -r '.data[0].id')
           echo "Team ID: $team_id"
 
-          curl \
+          RESPONSE=$(curl \
             --header "Authorization: Bearer $TOKEN" \
             --header "Content-Type: application/vnd.api+json" \
             --request POST \
-            --data @payload.json \
-            https://app.terraform.io/api/v2/teams/$team_id/authentication-token
+            https://app.terraform.io/api/v2/teams/$team_id/authentication-token)
+
+          echo "RESPONSE: $RESPONSE"
+          token_id=$(echo "$RESPONSE" | jq -r '.data.id')
+          echo "token_id ID: $token_id"
 
 
 
