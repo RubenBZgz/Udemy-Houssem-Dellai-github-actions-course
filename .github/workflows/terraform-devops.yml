@@ -176,8 +176,8 @@ jobs:
               workspaces {
                 name = "$HCP_WORKSPACE"
               }
-              token = "$TF_TOKEN_app_terraform_io"
-              
+              #token = "$TF_TOKEN_app_terraform_io"
+
             }
           }
           EOT
@@ -187,10 +187,11 @@ jobs:
           fi
 
       - name: Terraform Init
-        #env:
+        env:
           #TF_CLOUD_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           #TF_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
           #TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+          TF_CLOUD_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }} 
         run: |
           # Initialize a new or existing Terraform working directory by creating initial files, 
           # loading any remote state, downloading modules, etc.
