@@ -37,12 +37,14 @@ jobs:
           TOKEN_PRUEBA: ${{ vars.PRUEBA }}
 
         run: |
-          echo "TOKEN PRUEBA: $TOKEN_PRUEBA"
+          TOKEN=$TOKEN_PRUEBA
+          ORGANIZATION=$BACKEND_ORGANIZATION
+          echo "TOKEN PRUEBA: $TOKEN"
           curl \
-            --header "Authorization: Bearer $TOKEN_PRUEBA" \
+            --header "Authorization: Bearer $TOKEN" \
             --header "Content-Type: application/vnd.api+json" \
             --request GET \
-            https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/teams
+            https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams
 
       - name: Rotate Terraform API Token
         env:
