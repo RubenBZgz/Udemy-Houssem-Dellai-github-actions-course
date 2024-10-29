@@ -48,7 +48,8 @@ jobs:
             --request GET https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams)
           
           # Use jq to parse and get the value of "id"
-          team_id=$(echo "$RESPONSE" | jq -r '.relationships.team.data.id')
+          echo "RESPONSE: $RESPONSE"
+          team_id=$(echo "$RESPONSE" | jq -r '.data.relationships.team.data.id')
 
           # Display the result
           echo "Team ID"
