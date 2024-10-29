@@ -51,6 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [scan-terraform-config]
+    env: 
+      TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -84,11 +86,6 @@ jobs:
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3.1.0
 
-      - name: Terraform Login
-        env: 
-          TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-        run: |
-          terraform login
 
       # AzureRM Backend Configuration
       - name: AzureRM Terraform Backend
@@ -233,6 +230,7 @@ jobs:
           # cat tfplan.json | jq '[.resource_changes[] | {type: .type, name: .change.after.name, actions: .change.actions[]}]' 
           # cat tfplan.json | jq -r '(.resource_changes[] | [.change.actions[], .type, .change.after.name]) | @tsv'
 
+      # Terraform login is not necessary as we are using TF_TOKEN_app_terraform_io secret
       - name: Add Terraform Plan Comment
         id: comment
         uses: actions/github-script@v7.0.0
@@ -263,6 +261,7 @@ jobs:
             })
 
       # On push to main, build or change infrastructure according to Terraform configuration files
+      # Terraform login is not necessary as we are using TF_TOKEN_app_terraform_io secret
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
