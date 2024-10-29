@@ -32,7 +32,7 @@ jobs:
           BACKEND_ORGANIZATION: ${{ secrets.BACKEND_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-          PRUEBA: ${{ env.PRUEBA }}
+          TOKEN_PRUEBA: ${{ env.PRUEBA }}
 
         run: |
           # Example of how you could interact with the Terraform API to rotate the token
@@ -42,31 +42,21 @@ jobs:
           AUTH_HEADER="Authorization: Bearer $OLD_TOKEN"
           NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/authentication-tokens -H "$AUTH_HEADER" | jq .new_token)
           
+          echo "TOKEN PRUEBA: $TOKEN_PRUEBA"
           curl \
-            --header "Authorization: Bearer $TOKEN" \
+            --header "Authorization: Bearer $TOKEN_PRUEBA" \
             --header "Content-Type: application/vnd.api+json" \
             --request GET \
             https://app.terraform.io/api/v2/organizations/my-organization/teams
 
 
-          curl \
-            --header "Authorization: Bearer $TOKEN" \
-            --header "Content-Type: application/vnd.api+json" \
-            --request GET \
-            https://app.terraform.io/api/v2/teams/team-6yEmxNAhaoQLH1Da/authentication-token
-
-
           echo "Antiguo Token"
-          gh secret set TF_API_TOKEN
-          echo "EW_TOKEN: $NEW_TOKEN"
-
-          echo "Token PRUEBA"
-          echo "$PRUEBA"
+          echo "NEW_TOKEN: $NEW_TOKEN"
 
           # Check if the new token was successfully retrieved
           if [ -n "$NEW_TOKEN" ]; then
             # Update GitHub secret with the new token
-            gh secret set TF_API_TOKEN -b "$NEW_TOKEN"
+            #gh secret set TF_API_TOKEN -b "$NEW_TOKEN"
             echo "GitHub secret updated successfully."
           else
             echo "Failed to retrieve new token."
