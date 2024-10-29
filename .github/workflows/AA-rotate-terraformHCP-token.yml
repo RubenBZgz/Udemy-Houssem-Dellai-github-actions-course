@@ -42,10 +42,16 @@ jobs:
           echo "TOKEN PRUEBA: $TOKEN"
           echo "https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams"
 
-          curl \
+          RESPONSE=curl \
             --header "Authorization: Bearer $TOKEN" \
             --header "Content-Type: application/vnd.api+json" \
             --request GET https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams
+          
+          # Use jq to parse and get the value of "id"
+          team_id=$(echo "$RESPONSE" | jq -r '.relationships.team.data.id')
+
+          # Display the result
+          echo "Team ID: $team_id"
 
       - name: Rotate Terraform API Token
         env:
