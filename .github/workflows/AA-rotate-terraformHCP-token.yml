@@ -41,8 +41,9 @@ jobs:
           AUTH_HEADER="Authorization: Bearer $OLD_TOKEN"
           NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/authentication-tokens -H "$AUTH_HEADER" | jq .new_token)
           
+          echo "OLD_TOKEN"
           gh secret set OLD_TOKEN
-          echo "$NEW_TOKEN"
+          echo "EW_TOKEN: $NEW_TOKEN"
 
           # Check if the new token was successfully retrieved
           if [ -n "$NEW_TOKEN" ]; then
