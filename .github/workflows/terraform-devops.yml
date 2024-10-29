@@ -161,6 +161,7 @@ jobs:
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         if: ${{ env.BACKEND_TYPE == 'hcp' }}
         run: |
           if [ ! -f ./backend.tf ]; then
@@ -175,6 +176,8 @@ jobs:
               workspaces {
                 name = "$HCP_WORKSPACE"
               }
+              token = "$TF_TOKEN_app_terraform_io"
+              
             }
           }
           EOT
