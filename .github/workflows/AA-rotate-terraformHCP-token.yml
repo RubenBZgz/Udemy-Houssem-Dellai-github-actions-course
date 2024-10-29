@@ -51,7 +51,8 @@ jobs:
           team_id=$(echo "$RESPONSE" | jq -r '.relationships.team.data.id')
 
           # Display the result
-          echo "Team ID: $team_id"
+          echo "Team ID"
+          echo "::add-mask::$team_id"
 
       - name: Rotate Terraform API Token
         env:
