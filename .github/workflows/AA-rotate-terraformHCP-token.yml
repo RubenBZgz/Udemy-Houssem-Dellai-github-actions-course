@@ -32,7 +32,7 @@ jobs:
           BACKEND_ORGANIZATION: ${{ secrets.BACKEND_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-          TOKEN_PRUEBA: ${{ env.PRUEBA }}
+          TOKEN_PRUEBA: ${{ vars.PRUEBA }}
 
         run: |
           TOKEN=$TOKEN_PRUEBA
