@@ -1,7 +1,8 @@
 Secrets:
 BACKEND_ORGANIZATION = Organization name of your HCP Terraform organization
 TF_API_TOKEN = API token to login inside my HCP Terraform workspace teams and lauch terraform init, apply...
-
+GITHUB_PAT = Fine-grained personal access token to update secrets of the repository
+https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
 
 Requirements:
