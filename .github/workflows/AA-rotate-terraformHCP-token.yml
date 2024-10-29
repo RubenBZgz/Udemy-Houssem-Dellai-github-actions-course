@@ -32,6 +32,7 @@ jobs:
           BACKEND_ORGANIZATION: ${{ secrets.BACKEND_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+          PRUEBA: ${{ env.PRUEBA }}
 
         run: |
           # Example of how you could interact with the Terraform API to rotate the token
@@ -41,7 +42,7 @@ jobs:
           AUTH_HEADER="Authorization: Bearer $OLD_TOKEN"
           NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/authentication-tokens -H "$AUTH_HEADER" | jq .new_token)
           
-          echo "OLD_TOKEN"
+          echo "Antiguo Token"
           gh secret set TF_API_TOKEN
           echo "EW_TOKEN: $NEW_TOKEN"
 
