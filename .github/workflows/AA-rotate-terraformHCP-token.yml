@@ -1,6 +1,8 @@
 name: AA-rotate-terraformHCP-token
 
 on:
+  push:
+    branches: [Personal]
   schedule:
     - cron: "0 0 1 * *" # Runs on the 1st of every month. 30 days of expiration time
 
@@ -35,13 +37,12 @@ jobs:
           TOKEN_PRUEBA: ${{ vars.PRUEBA }}
 
         run: |
-          TOKEN=$TOKEN_PRUEBA
-          echo "TOKEN PRUEBA: $TOKEN"
+          echo "TOKEN PRUEBA: $TOKEN_PRUEBA"
           curl \
-            --header "Authorization: Bearer $TOKEN" \
+            --header "Authorization: Bearer $TOKEN_PRUEBA" \
             --header "Content-Type: application/vnd.api+json" \
             --request GET \
-            https://app.terraform.io/api/v2/organizations/my-organization/teams
+            https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/teams
 
       - name: Rotate Terraform API Token
         env:
