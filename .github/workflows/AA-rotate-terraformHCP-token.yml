@@ -29,15 +29,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@master
       
-      - name: Curl Prueba
+      - name: Rotate Terraform API Token
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-          TOKEN_PRUEBA: ${{ vars.PRUEBA }}
 
         run: |
-          TOKEN=$TOKEN_PRUEBA
+          TOKEN=$OLD_TOKEN
           ORGANIZATION=$HCP_ORGANIZATION
           echo "TOKEN PRUEBA: $TOKEN"
           echo "https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams"
@@ -64,37 +63,10 @@ jobs:
           echo "token_id ID: $token_id"
 
 
-
-      - name: Rotate Terraform API Token
-        env:
-          HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
-          OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
-          GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-          TOKEN_PRUEBA: ${{ env.PRUEBA }}
-
-        run: |
-          # Example of how you could interact with the Terraform API to rotate the token
-          # and then update the GitHub secret with the new token.
-          BACKEND_ORGANIZATION=$HCP_ORGANIZATION
-          OLD_TOKEN=$OLD_TOKEN
-          AUTH_HEADER="Authorization: Bearer $OLD_TOKEN"
-          NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/$BACKEND_ORGANIZATION/authentication-tokens -H "$AUTH_HEADER" | jq .new_token)
-          
-          echo "TOKEN PRUEBA: $TOKEN_PRUEBA"
-          curl \
-            --header "Authorization: Bearer $TOKEN_PRUEBA" \
-            --header "Content-Type: application/vnd.api+json" \
-            --request GET \
-            https://app.terraform.io/api/v2/organizations/my-organization/teams
-
-
-          echo "Antiguo Token"
-          echo "NEW_TOKEN: $NEW_TOKEN"
-
           # Check if the new token was successfully retrieved
-          if [ -n "$NEW_TOKEN" ]; then
+          if [ -n "$token_id" ]; then
             # Update GitHub secret with the new token
-            #gh secret set TF_API_TOKEN -b "$NEW_TOKEN"
+            #gh secret set TF_API_TOKEN -b "$token_id"
             echo "GitHub secret updated successfully."
           else
             echo "Failed to retrieve new token."
