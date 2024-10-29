@@ -49,7 +49,7 @@ jobs:
           
           # Use jq to parse and get the value of "id"
           echo "RESPONSE: $RESPONSE"
-          team_id=$(echo "$RESPONSE" | jq -r '.data.relationships.team.data.id')
+          team_id=$(echo "$RESPONSE" | jq -r '.[0].data.relationships.team.data.id')
 
           # Display the result
           echo "Team ID"
