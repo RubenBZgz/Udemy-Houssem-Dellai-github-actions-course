@@ -8,18 +8,10 @@ on:
     branches: none # [ main ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-    inputs:
-      backend:
-        description: "Choose the backend to use (azurerm or hcp)"
-        required: true
-        default: "hcp"
-        type: choice
-        options:
-          - azurerm
-          - hcp
 
 env:
   WORKING_DIRECTORY: 05_Web_Sql_database
+  BACKEND_TYPE: 'hcp' #'azurerm' is also supported
 
 jobs:
   scan-terraform-config:
@@ -96,7 +88,7 @@ jobs:
           BACKEND_RESOURCE_GROUP_NAME: ${{ secrets.BACKEND_RESOURCE_GROUP_NAME }}
           BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER_NAME }}
           BACKEND_KEY: ${{ secrets.BACKEND_KEY }}
-        if: ${{ github.event.inputs.backend == 'azurerm' }}
+        if: ${{ env.BACKEND_TYPE == 'azurerm' }}
         with:
           # Azure CLI version to be used to execute the script. If not provided, latest version is used
           # azcliversion: 2.34.1 # optional, default is agentazcliversion
@@ -168,7 +160,7 @@ jobs:
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
-        if: ${{ github.event.inputs.backend == 'hcp' }}
+        if: ${{ env.BACKEND_TYPE == 'hcp' }}
         run: |
           if [ ! -f ./backend.tf ]; then
             echo "backend.tf not found!"
