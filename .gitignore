@@ -15,6 +15,8 @@
 # Backend files 
 backend.tf
 backend.tfvars
+05_Web_Sql_database/backend.tf
+
 
 # Private Keys or Sensitive Files
 *.pem
@@ -51,4 +53,3 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
-# .gitignore
