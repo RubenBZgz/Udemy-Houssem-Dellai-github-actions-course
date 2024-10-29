@@ -53,6 +53,14 @@ jobs:
           team_id=$(echo "$RESPONSE" | jq -r '.data[0].id')
           echo "Team ID: $team_id"
 
+          curl \
+            --header "Authorization: Bearer $TOKEN" \
+            --header "Content-Type: application/vnd.api+json" \
+            --request POST \
+            --data @payload.json \
+            https://app.terraform.io/api/v2/teams/$team_id/authentication-token
+
+
 
       - name: Rotate Terraform API Token
         env:
