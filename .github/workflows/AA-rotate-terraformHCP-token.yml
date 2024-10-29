@@ -57,10 +57,6 @@ jobs:
           team_id=$(echo "$RESPONSE" | jq -r '.data.[0]')
           echo "Team ID: $team_id"
 
-          # Use jq to parse and get the value of "id"
-          team_id=$(echo "$RESPONSE" | jq -r '.data[0].id')
-          echo "Team ID: $team_id"
-
 
       - name: Rotate Terraform API Token
         env:
