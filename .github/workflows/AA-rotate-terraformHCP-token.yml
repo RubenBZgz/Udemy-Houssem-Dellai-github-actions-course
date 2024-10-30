@@ -28,13 +28,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@master
+
+      - name: Rotate Terraform API Token
+        env:
+          REPOSITORY: ${{ github.repository }}
+
+        run: |
+          REPOSITORY=$REPOSITORY
+          echo "Repositorio: $REPOSITORY"
       
       - name: Rotate Terraform API Token
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-          REPOSITORY: ${{ github.github.repository }}
+          REPOSITORY: ${{ github.repository }}
 
         run: |
           REPOSITORY=$REPOSITORY
