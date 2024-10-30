@@ -21,6 +21,7 @@ jobs:
 
 
   rotate-token:
+    needs: check-token
     runs-on: ubuntu-latest
 
     # Inside my workspace, I'm going to use a Team Token for GitHub Actions.
@@ -42,20 +43,19 @@ jobs:
           echo "Repositorio: $REPOSITORY"
           TOKEN=$OLD_TOKEN
           ORGANIZATION=$HCP_ORGANIZATION
-          echo "TOKEN PRUEBA: $TOKEN"
-          echo "https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams"
 
+
+          # Get Team API Token id
           RESPONSE=$(curl \
             --header "Authorization: Bearer $TOKEN" \
             --header "Content-Type: application/vnd.api+json" \
             --request GET https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams)
           
-          echo "RESPONSE: $RESPONSE"
-
           # Use jq to parse and get the value of "id"
           team_id=$(echo "$RESPONSE" | jq -r '.data[0].id')
-          echo "Team ID: $team_id"
 
+
+          # Renew Team API Token with an expiration of 1 houre
           expiration_date=$(date -u -d '+1 hour' +"%Y-%m-%dT%H:%M:%SZ")
           echo "EXPIRATION_DATE: $expiration_date"
           cat <<EOF > payload.json
@@ -76,12 +76,10 @@ jobs:
             --data @payload.json \
             https://app.terraform.io/api/v2/teams/$team_id/authentication-token)
 
-          echo "RESPONSE: $RESPONSE"
           token_id=$(echo "$RESPONSE" | jq -r '.data.attributes.token')
-          echo "token_id ID: $token_id"
 
 
-          # Check if the new token was successfully retrieved
+          # Check if the new token was successfully retrieved and update GitHub secret token to use Terraform
           if [ -n "$token_id" ]; then
             # Update GitHub secret with the new token
             gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
