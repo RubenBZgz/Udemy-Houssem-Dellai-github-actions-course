@@ -29,20 +29,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@master
       
-      - name: Set Secret
-        env:
-          HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
-          OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
-          GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-
-        run: |
-          gh secret set TF_API_TOKEN --repo RubenBZgz/Udemy-Houssem-Dellai-github-actions-course --body "hola"
-
       - name: Rotate Terraform API Token
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+          REPOSITORY: ${{ github.github.repository }}
 
         run: |
           TOKEN=$OLD_TOKEN
@@ -75,7 +67,7 @@ jobs:
           # Check if the new token was successfully retrieved
           if [ -n "$token_id" ]; then
             # Update GitHub secret with the new token
-            gh secret set TF_API_TOKEN -b "$token_id"
+            gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
             echo "GitHub secret updated successfully."
           else
             echo "Failed to retrieve new token."
