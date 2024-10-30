@@ -37,6 +37,8 @@ jobs:
           REPOSITORY: ${{ github.github.repository }}
 
         run: |
+          REPOSITORY=$REPOSITORY
+          echo "Repositorio: $REPOSITORY"
           TOKEN=$OLD_TOKEN
           ORGANIZATION=$HCP_ORGANIZATION
           echo "TOKEN PRUEBA: $TOKEN"
