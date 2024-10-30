@@ -29,13 +29,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@master
 
-      - name: Rotate Terraform API Token
-        env:
-          REPOSITORY: ${{ github.repository }}
-
-        run: |
-          REPOSITORY=$REPOSITORY
-          echo "Repositorio: $REPOSITORY"
       
       - name: Rotate Terraform API Token
         env:
@@ -63,10 +56,24 @@ jobs:
           team_id=$(echo "$RESPONSE" | jq -r '.data[0].id')
           echo "Team ID: $team_id"
 
+          expiration_date=$(date -u -d '+1 hour' +"%Y-%m-%dT%H:%M:%SZ")
+          echo "EXPIRATION_DATE: $expiration_date"
+          cat <<EOF > payload.json
+          {
+            "data": {
+              "type": "authentication-token",
+              "attributes": {
+                "expired-at": "$expiration_date"
+              }
+            }
+          }
+          EOF
+
           RESPONSE=$(curl \
             --header "Authorization: Bearer $TOKEN" \
             --header "Content-Type: application/vnd.api+json" \
             --request POST \
+            --data @payload.json \
             https://app.terraform.io/api/v2/teams/$team_id/authentication-token)
 
           echo "RESPONSE: $RESPONSE"
