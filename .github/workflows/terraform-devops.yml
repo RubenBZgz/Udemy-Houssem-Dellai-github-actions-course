@@ -12,8 +12,12 @@ on:
 env:
   WORKING_DIRECTORY: 05_Web_Sql_database
   BACKEND_TYPE: 'hcp' #'azurerm' is also supported
+  REPOSITORY: ${{ github.repository }}
 
 jobs:
+  rotate-terraformHCP-Token:
+    uses: .github/workflows/AA-rotate-terraformHCP-token.yml
+    
   scan-terraform-config:
     runs-on: ubuntu-latest
     name: Scan Terraform with Checov
@@ -265,4 +269,4 @@ jobs:
           #ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           #ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           #ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        run: terraform apply -auto-approve -input=false tfplan
+        run: echo 'funciona' #terraform apply -auto-approve -input=false tfplan
