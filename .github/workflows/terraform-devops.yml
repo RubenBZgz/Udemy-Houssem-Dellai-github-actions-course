@@ -14,7 +14,6 @@ on:
 env:
   WORKING_DIRECTORY: 05_Web_Sql_database
   BACKEND_TYPE: 'hcp' #'azurerm' is also supported
-  REPOSITORY: ${{ github.repository }}
 
 jobs:
   scan-terraform-config:
@@ -43,7 +42,7 @@ jobs:
   
   rotate-terraformHCP-Token:
     uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml
-    #uses: .github/workflows/AA-rotate-terraformHCP-token.yml
+    
   
   
   deploy-azure-infra-terraform:
