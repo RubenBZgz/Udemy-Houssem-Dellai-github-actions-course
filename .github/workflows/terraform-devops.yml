@@ -41,10 +41,7 @@ jobs:
           # container_user: 1000 # optional: Define what UID and / or what GID to run the container under to prevent permission issues
   
   reusable_workflow_job:
-    runs-on: ubuntu-latest
-    name: Rotate Terraform HCP Token
-    steps:
-    - uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course2/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
+    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course2/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
   
   deploy-azure-infra-terraform:
     name: Deploy to Azure with Terraform
