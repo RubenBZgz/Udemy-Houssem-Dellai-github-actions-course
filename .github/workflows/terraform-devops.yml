@@ -40,8 +40,8 @@ jobs:
           # container_user: 1000 # optional: Define what UID and / or what GID to run the container under to prevent permission issues
   
   rotate-terraformHCP-Token:
-    #uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml
-    uses: .github/workflows/AA-rotate-terraformHCP-token.yml
+    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml
+    #uses: .github/workflows/AA-rotate-terraformHCP-token.yml
   
   
   deploy-azure-infra-terraform:
