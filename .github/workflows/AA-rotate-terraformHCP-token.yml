@@ -80,12 +80,13 @@ jobs:
             https://app.terraform.io/api/v2/teams/$team_id/authentication-token)
 
           token_id=$(echo "$RESPONSE" | jq -r '.data.attributes.token')
+          echo "RESPONSE POST: $RESPONSE"
 
 
           # Check if the new token was successfully retrieved and update GitHub secret token to use Terraform
           if [ -n "$token_id" ]; then
             # Update GitHub secret with the new token
-            gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
+            #gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
             echo "GitHub secret updated successfully."
           else
             echo "Failed to retrieve new token."
