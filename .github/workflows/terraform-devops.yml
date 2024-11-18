@@ -43,9 +43,8 @@ jobs:
   Rotate-HCP-Token:
     uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
   
-
   Check-spelling:
-    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-spell.yml@Personal
+    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal
   
   deploy-azure-infra-terraform:
     name: Deploy to Azure with Terraform
