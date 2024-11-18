@@ -40,8 +40,12 @@ jobs:
           # baseline: cloudformation/.checkov.baseline # optional: Path to a generated baseline file. Will only report results not in the baseline.
           # container_user: 1000 # optional: Define what UID and / or what GID to run the container under to prevent permission issues
   
-  reusable_workflow_job:
-    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course2/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
+  Rotate-HCP-Token:
+    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
+  
+
+  Check-spelling:
+    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-spell.yml@Personal
   
   deploy-azure-infra-terraform:
     name: Deploy to Azure with Terraform
