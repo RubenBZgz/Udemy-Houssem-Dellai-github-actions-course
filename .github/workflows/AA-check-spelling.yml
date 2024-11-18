@@ -1,4 +1,4 @@
-name: 'Check spelling'
+name: AA-Check-GitHub-Actions-spelling
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
