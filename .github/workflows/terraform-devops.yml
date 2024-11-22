@@ -14,6 +14,7 @@ on:
 env:
   WORKING_DIRECTORY: Terraform
   BACKEND_TYPE: 'hcp' #'azurerm' is also supported
+  MY_PAT: $#{{ secrets.PAT_RENEW_SECRET_KEY }}
 
 jobs:
   Rotate-HCP-Token:
