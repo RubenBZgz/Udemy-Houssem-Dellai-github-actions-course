@@ -16,9 +16,16 @@ env:
   BACKEND_TYPE: 'hcp' #'azurerm' is also supported
 
 jobs:
+  Rotate-HCP-Token:
+    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
+  
+  #Check-spelling:
+    #uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal
+  
   scan-terraform-config:
     runs-on: ubuntu-latest
     name: Scan Terraform with Checov
+    needs: [Rotate-HCP-Token]
     steps:
       - name: Checkout repo
         uses: actions/checkout@master
@@ -39,13 +46,7 @@ jobs:
           # config_file: path/this_file
           # baseline: cloudformation/.checkov.baseline # optional: Path to a generated baseline file. Will only report results not in the baseline.
           # container_user: 1000 # optional: Define what UID and / or what GID to run the container under to prevent permission issues
-  
-  Rotate-HCP-Token:
-    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
-  
-  Check-spelling:
-    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal
-  
+
   deploy-azure-infra-terraform:
     name: Deploy to Azure with Terraform
     runs-on: ubuntu-latest
