@@ -15,10 +15,9 @@ on:
   
   # Allow you to use this workflow in another WF
   workflow_call:
-    inputs:
-      pat:
+    secrets:
+      personal_access_token:
         required: true
-        type: string
 
 jobs:
   check-token:
@@ -28,9 +27,9 @@ jobs:
         env:
           SECRET_PAT: ${{ secrets.PAT_RENEW_SECRET_KEY }}
         run: |
-          echo "INPUT: ${{ inputs.pat }}"
-          if [[ -n "${{ inputs.pat }}" ]]; then
-            echo "MY_PAT=${{ inputs.pat }}" >> $GITHUB_ENV
+          echo "INPUT: ${{ secrets.personal_access_token }}"
+          if [[ -n "${{ secrets.personal_access_token }}" ]]; then
+            echo "MY_PAT=${{ secrets.personal_access_token }}" >> $GITHUB_ENV
           elif [[ -n "$SECRET_PAT" ]]; then
             echo "MY_PAT=$SECRET_PAT" >> $GITHUB_ENV
           else
