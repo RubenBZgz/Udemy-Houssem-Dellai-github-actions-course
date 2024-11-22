@@ -14,11 +14,13 @@ on:
 env:
   WORKING_DIRECTORY: Terraform
   BACKEND_TYPE: 'hcp' #'azurerm' is also supported
-  MY_PAT: $#{{ secrets.PAT_RENEW_SECRET_KEY }}
+  #MY_PAT: $#{{ secrets.PAT_RENEW_SECRET_KEY }}
 
 jobs:
   Rotate-HCP-Token:
     uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
+    with:
+      pat: $MY_PAT
   
   #Check-spelling:
     #uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal

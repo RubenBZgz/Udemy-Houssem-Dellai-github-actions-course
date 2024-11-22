@@ -1,8 +1,8 @@
 name: AA-rotate-terraformHCP-token
 
 on:
-  push:
-    branches: [Personal]
+  #push:
+    #branches: [Personal]
   schedule:
     - cron: "0 0 1 * *" # Runs on the 1st of every month. 30 days of expiration time
 
@@ -24,11 +24,22 @@ jobs:
   check-token:
     runs-on: ubuntu-latest
     steps:
-
-        
-      - name: Check PAT Validity
+      - name: Set MY_PAT
         env:
-          MY_PAT: $#{{ secrets.PAT_RENEW_SECRET_KEY }}
+          SECRET_PAT: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+        run: |
+          if [[ -n "${{ inputs.pat }}" ]]; then
+            echo "MY_PAT=${{ inputs.pat }}" >> $GITHUB_ENV
+          elif [[ -n "$SECRET_PAT" ]]; then
+            echo "MY_PAT=$SECRET_PAT" >> $GITHUB_ENV
+          else
+            echo "No PAT provided. Exiting."
+            exit 1
+          fi
+
+      - name: Check PAT Validity
+        #env:
+          #MY_PAT: $#{{ secrets.PAT_RENEW_SECRET_KEY }}
         run: |
           curl -H "Authorization: token $MY_PAT" https://api.github.com/user || exit 1
 
