@@ -1,3 +1,14 @@
+If you want to deploy an Azure Kubernetes Service (AKS), you have to check this repository:
+https://github.com/HoussemDellai/ProductsStoreOnKubernetes
+https://github.com/HoussemDellai/aks-course
+
+In order to deploy an Azure Container Apps, check this repo:
+https://github.com/HoussemDellai/aca-course
+https://github.com/HoussemDellai/aca-landing-zone-accelerator
+https://github.com/HoussemDellai/aca-vs-aks
+
+
+
 Prerequites:
 Create a Service Principal:
 

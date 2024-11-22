@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  WORKING_DIRECTORY: 05_Web_Sql_database
+  WORKING_DIRECTORY: Terraform
   BACKEND_TYPE: 'hcp' #'azurerm' is also supported
 
 jobs:
