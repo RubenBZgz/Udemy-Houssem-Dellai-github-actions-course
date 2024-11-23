@@ -134,4 +134,7 @@ jobs:
             exit 1
           fi
 
-    
+        #Check new token output is being sent
+      - name: Debug Output
+        run: |
+          echo "New Token: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}"

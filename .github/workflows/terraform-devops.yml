@@ -60,7 +60,7 @@ jobs:
     name: Deploy to Azure with Terraform
     runs-on: ubuntu-latest
     environment: production
-    needs: [scan-terraform-config]
+    needs: [Rotate-HCP-Token, scan-terraform-config]
     env: 
       TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new_token }}
 
