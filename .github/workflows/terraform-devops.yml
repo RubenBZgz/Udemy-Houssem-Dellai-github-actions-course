@@ -178,7 +178,7 @@ jobs:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
           #TF_TOKEN_app_terraform_io: $#{{ secrets.TF_API_TOKEN }}
-          TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new-token }}
+          #TF_TOKEN_app_terraform_io: $#{{ needs.Rotate-HCP-Token.outputs.new-token }}
         if: ${{ env.BACKEND_TYPE == 'hcp' }}
         run: |
           if [ ! -f ./backend.tf ]; then
@@ -207,7 +207,7 @@ jobs:
 
       - name: Terraform Init
         env:
-          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+          TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new-token }}
         run: |
           # Initialize a new or existing Terraform working directory by creating initial files, 
           # loading any remote state, downloading modules, etc.
