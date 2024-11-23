@@ -28,7 +28,7 @@ on:
     # Map the workflow outputs to job outputs
     outputs:
       new-token:
-        description: "The first output string"
+        description: "The rotated Terraform API token"
         value: ${{ jobs.rotate-token.outputs.new-token }}
 
 jobs:
@@ -127,7 +127,8 @@ jobs:
             # Update GitHub secret with the new token
             gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
             echo "GitHub secret updated successfully."
-            echo "new-token=$token_id" >> $GITHUB_ENV
+            #echo "new-token=$token_id" >> $GITHUB_ENV
+            #echo "new-token=$NEW_TOKEN" >> $GITHUB_OUTPUT
           else
             echo "Failed to retrieve new token."
             exit 1
