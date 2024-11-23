@@ -177,7 +177,8 @@ jobs:
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
-          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+          #TF_TOKEN_app_terraform_io: $#{{ secrets.TF_API_TOKEN }}
+          TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new-token }}
         if: ${{ env.BACKEND_TYPE == 'hcp' }}
         run: |
           if [ ! -f ./backend.tf ]; then

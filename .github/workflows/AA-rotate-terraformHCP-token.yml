@@ -62,7 +62,7 @@ jobs:
         uses: actions/checkout@master
 
       
-      - name: Rotate Terraform API Token
+      - name: Rotate-Terraform-API-Token
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
@@ -118,7 +118,11 @@ jobs:
             # Update GitHub secret with the new token
             gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
             echo "GitHub secret updated successfully."
+            echo "new-token=$token_id" >> $GITHUB_ENV
           else
             echo "Failed to retrieve new token."
             exit 1
           fi
+
+    outputs:
+      new-token: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
