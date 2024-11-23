@@ -187,10 +187,12 @@ jobs:
             cat <<EOT > backend.tf
           terraform {
             cloud {
-              organization = "$HCP_ORGANIZATION"
+              #organization = "$HCP_ORGANIZATION"
+              organization = "Udemy-github-actions-course"
 
               workspaces {
-                name = "$HCP_WORKSPACE"
+                #name = "$HCP_WORKSPACE"
+                name = "Udemy-Houssem-Dellai-github-actions-course"
               }
               #token = "$TF_TOKEN_app_terraform_io"
 
