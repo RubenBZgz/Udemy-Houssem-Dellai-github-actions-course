@@ -25,6 +25,11 @@ on:
       PAT_RENEW_SECRET_KEY: 
         required: true
 
+    # Map the workflow outputs to job outputs
+    outputs:
+      new-token:
+        description: "The first output string"
+        value: ${{ jobs.rotate-token.outputs.new-token }}
 
 jobs:
   check-token:
