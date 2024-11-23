@@ -21,6 +21,9 @@ jobs:
     uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
     secrets:
       personal_access_token: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+      HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+      PAT_RENEW_SECRET_KEY: ${{ secrets.PAT_RENEW_SECRET_KEY }}
     #secrets: inherit
   
   #Check-spelling:

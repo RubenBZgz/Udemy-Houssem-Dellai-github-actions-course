@@ -18,7 +18,14 @@ on:
     secrets:
       personal_access_token:
         required: true
+      HCP_ORGANIZATION:
+        required: true
+      TF_API_TOKEN:
+        required: true
+      PAT_RENEW_SECRET_KEY: 
+        required: true
 
+        
 jobs:
   check-token:
     runs-on: ubuntu-latest
