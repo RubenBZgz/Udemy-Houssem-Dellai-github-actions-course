@@ -54,6 +54,9 @@ jobs:
   rotate-token:
     needs: check-token
     runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      new-token: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
 
     # Inside my workspace, I'm going to use a Team Token for GitHub Actions.
     # In my case, It uses owners team, however, you should create a new team with limitations.
@@ -62,7 +65,8 @@ jobs:
         uses: actions/checkout@master
 
       
-      - name: Rotate-Terraform-API-Token
+      #- name: Rotate-Terraform-API-Token
+      - id: Rotate-Terraform-API-Token
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
@@ -124,5 +128,4 @@ jobs:
             exit 1
           fi
 
-    outputs:
-      new-token: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
+    
