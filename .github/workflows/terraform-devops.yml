@@ -72,6 +72,9 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
 
     steps:
+      - name: Debug Token
+        run: echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
+
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v2
@@ -92,9 +95,6 @@ jobs:
           inlineScript: |
             az account show
             az storage -h
-            
-      - name: Debug Token
-        run: echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
 
       # Install the latest version of Terraform CLI
       - name: Install Terraform
