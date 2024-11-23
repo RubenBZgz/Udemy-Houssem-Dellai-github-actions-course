@@ -62,7 +62,7 @@ jobs:
     environment: production
     needs: [scan-terraform-config]
     env: 
-      TF_TOKEN_app_terraform_io: $#{{ needs.Rotate-HCP-Token.outputs.new-token }} ${{ needs.Rotate-HCP-Token.outputs.new_token }}
+      TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new_token }}
 
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -72,9 +72,6 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
 
     steps:
-      - name: Debug Token
-        run: echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
-
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v2
@@ -95,6 +92,9 @@ jobs:
           inlineScript: |
             az account show
             az storage -h
+            
+      - name: Debug Token
+        run: echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
 
       # Install the latest version of Terraform CLI
       - name: Install Terraform
