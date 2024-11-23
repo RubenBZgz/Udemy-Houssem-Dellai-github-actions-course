@@ -73,7 +73,14 @@ jobs:
 
     steps:
       - name: Debug Token
-        run: echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
+        run: |
+          echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
+          if [ -z "${TF_TOKEN_app_terraform_io}" ]; then
+            echo "Error: TF_TOKEN_app_terraform_io is empty. Canceling execution."
+            exit 1
+          else
+            echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
+          fi
 
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
