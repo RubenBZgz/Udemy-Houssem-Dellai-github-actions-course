@@ -127,7 +127,7 @@ jobs:
             # Update GitHub secret with the new token
             gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
             echo "GitHub secret updated successfully."
-            #echo "new-token=$token_id" >> $GITHUB_ENV
+            echo "::add-mask::${token_id}"
             echo "new-token=$token_id" >> $GITHUB_OUTPUT
           else
             echo "Failed to retrieve new token."

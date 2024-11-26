@@ -1,3 +1,7 @@
+provider "azurerm" {
+  features {}
+}
+
 terraform {
   cloud {
     organization = "$HCP_ORGANIZATION"
@@ -5,7 +9,6 @@ terraform {
     workspaces {
       name = "$HCP_WORKSPACE"
     }
-    #token = "$TF_TOKEN_app_terraform_io"
-
   }
 }
+

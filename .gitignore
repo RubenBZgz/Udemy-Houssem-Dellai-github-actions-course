@@ -16,6 +16,8 @@
 backend.tf
 backend.tfvars
 05_Web_Sql_database/backend.tf
+*.tfvars
+
 
 
 # Private Keys or Sensitive Files

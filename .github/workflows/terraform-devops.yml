@@ -64,7 +64,6 @@ jobs:
     env: 
       TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new-token }}
 
-
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
