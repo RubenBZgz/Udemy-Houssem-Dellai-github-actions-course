@@ -62,7 +62,7 @@ jobs:
     environment: production
     needs: [Rotate-HCP-Token, scan-terraform-config]
     env: 
-      TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new_token }}
+      TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new-token }}
 
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -102,7 +102,7 @@ jobs:
           else
             echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
           fi
-          
+
       # Install the latest version of Terraform CLI
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3.1.0
