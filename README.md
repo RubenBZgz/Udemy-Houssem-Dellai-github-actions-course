@@ -13,6 +13,29 @@ https://developer.hashicorp.com/terraform/language/backend/remote
 1. Terraform login
 2. cd tfc-getting-started
 3. scripts/setup.sh
+4. Create terraform backend like this
+```
+terraform {
+
+  /*  NORMAL AZURE BACKEND HARDCODED
+  backend "azurerm" {
+    resource_group_name   = ""
+    storage_account_name  = ""
+    container_name        = ""
+    key                   = ""
+  } */
+
+  # Terraform Cloud Backend
+  cloud {
+    organization = "Your HCP Terraform Organization"
+
+    workspaces {
+      name = "Your HCP Terraform Workspace"
+    }
+  }
+}
+```
+
 
 In my case, I'm going to use a variable set to use this credentials across multiple proyects. You can create it in your workspace settings.
 
