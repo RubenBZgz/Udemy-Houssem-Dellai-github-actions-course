@@ -204,7 +204,6 @@ jobs:
               workspaces {
                 name = "$HCP_WORKSPACE"
               }
-              #token = "$TF_TOKEN_app_terraform_io"
 
             }
           }
@@ -215,8 +214,6 @@ jobs:
           fi
 
       - name: Terraform Init
-        #env:
-          #TF_TOKEN_app_terraform_io: $#{{ needs.Rotate-HCP-Token.outputs.new-token }}
         run: |
           # Initialize a new or existing Terraform working directory by creating initial files, 
           # loading any remote state, downloading modules, etc.
