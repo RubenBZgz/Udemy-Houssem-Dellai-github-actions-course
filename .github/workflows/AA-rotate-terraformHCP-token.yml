@@ -8,10 +8,6 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch: 
-    inputs:
-      pat:
-        description: "Personal Access Token (optional if using a secret)"
-        required: false
   
   # Allow you to use this workflow in another WF
   workflow_call:
@@ -50,8 +46,6 @@ jobs:
           fi
 
       - name: Check PAT Validity
-        #env:
-          #MY_PAT: $#{{ secrets.PAT_RENEW_SECRET_KEY }}
         run: |
           curl -H "Authorization: token $MY_PAT" https://api.github.com/user || exit 1
 
@@ -59,18 +53,18 @@ jobs:
   rotate-token:
     needs: check-token
     runs-on: ubuntu-latest
-    # Map a step output to a job output
+    
+    # TF API Token Output. It will be used to use terraform commands later.
     outputs:
       new-token: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
 
-    # Inside my workspace, I'm going to use a Team Token for GitHub Actions.
-    # In my case, It uses owners team, however, you should create a new team with limitations.
+
+    # In my case, I'm using the owners team token as I have a free account. However, you should create a new team with limitations.
     steps:
       - name: Checkout repository
         uses: actions/checkout@master
 
       
-      #- name: Rotate-Terraform-API-Token
       - id: Rotate-Terraform-API-Token
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
@@ -80,7 +74,6 @@ jobs:
 
         run: |
           REPOSITORY=$REPOSITORY
-          echo "Repositorio: $REPOSITORY"
           TOKEN=$OLD_TOKEN
           ORGANIZATION=$HCP_ORGANIZATION
 
@@ -91,14 +84,13 @@ jobs:
             --header "Content-Type: application/vnd.api+json" \
             --request GET https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams)
           
-          # Use jq to parse and get the value of "id"
+          
+          # Use jq to parse and get the value of the team id "id"
           team_id=$(echo "$RESPONSE" | jq -r '.data[0].id')
-          echo "Team_id: $team_id"
 
 
-          # Renew Team API Token with an expiration of 1 houre
+          # Renew Team API Token with an expiration of 1 hour
           expiration_date=$(date -u -d '+1 hour' +"%Y-%m-%dT%H:%M:%SZ")
-          echo "EXPIRATION_DATE: $expiration_date"
           cat <<EOF > payload.json
           {
             "data": {
@@ -110,6 +102,7 @@ jobs:
           }
           EOF
 
+
           RESPONSE=$(curl \
             --header "Authorization: Bearer $TOKEN" \
             --header "Content-Type: application/vnd.api+json" \
@@ -117,9 +110,8 @@ jobs:
             --data @payload.json \
             https://app.terraform.io/api/v2/teams/$team_id/authentication-token)
 
+          
           token_id=$(echo "$RESPONSE" | jq -r '.data.attributes.token')
-          echo "RESPONSE POST: $RESPONSE"
-          echo "RESPONSE POST: $token_id"
 
 
           # Check if the new token was successfully retrieved and update GitHub secret token to use Terraform
@@ -127,6 +119,8 @@ jobs:
             # Update GitHub secret with the new token
             gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
             echo "GitHub secret updated successfully."
+
+            # Send the new token value to Github Outputs
             echo "new-token=$token_id" >> $GITHUB_OUTPUT
             
           else
