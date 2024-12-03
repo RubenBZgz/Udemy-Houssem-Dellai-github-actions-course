@@ -94,6 +94,7 @@ jobs:
 
       - name: Debug Token
         run: |
+          echo "::add-mask::${TF_TOKEN_app_terraform_io}"
           echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
           if [ -z "${TF_TOKEN_app_terraform_io}" ]; then
             echo "Error: TF_TOKEN_app_terraform_io is empty. Canceling execution."
