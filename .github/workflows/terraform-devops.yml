@@ -69,11 +69,19 @@ jobs:
       run:
         shell: bash
         working-directory: ${{ env.WORKING_DIRECTORY }}
+        
 
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v2
+      
+      - name: Display Current Directory
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Listing contents of the current directory:"
+          ls -al
 
       - name: Login to Azure with Service Principal
         uses: Azure/login@v2
