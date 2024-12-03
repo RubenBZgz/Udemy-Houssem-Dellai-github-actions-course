@@ -242,7 +242,7 @@ jobs:
         #i f: github.event_name == 'pull_request' # 'push' #
         run: |
           #az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-          terraform plan -out tfplan -input=false -var="subscription_id=a50bc832-7d75-4b57-9f64-b9d8ad747720"
+          terraform plan -out tfplan -input=false -var="subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}"
 
           # # show the tfplan file
           # terraform show -json tfplan
