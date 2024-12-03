@@ -187,8 +187,6 @@ jobs:
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
-          #TF_TOKEN_app_terraform_io: $#{{ secrets.TF_API_TOKEN }}
-          #TF_TOKEN_app_terraform_io: $#{{ needs.Rotate-HCP-Token.outputs.new-token }}
         if: ${{ env.BACKEND_TYPE == 'hcp' }}
         run: |
           if [ ! -f ./backend.tf ]; then
@@ -227,7 +225,7 @@ jobs:
           else
             cat backend.tf
           fi
-          terraform init -input=false
+          terraform init -upgrade -input=false
 
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
@@ -244,7 +242,7 @@ jobs:
         #i f: github.event_name == 'pull_request' # 'push' #
         run: |
           #az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-          terraform plan -out tfplan -input=false
+          terraform plan -out tfplan -input=false -var="subscription_id=a50bc832-7d75-4b57-9f64-b9d8ad747720"
 
           # # show the tfplan file
           # terraform show -json tfplan

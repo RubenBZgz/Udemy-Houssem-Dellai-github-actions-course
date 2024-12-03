@@ -1,3 +1,8 @@
+variable "subscription_id" {
+  description = "The Azure subscription ID"
+  type        = string
+}
+
 variable "HCP_ORGANIZATION" {
   type        = string
   description = "HCP Terraform organization"
