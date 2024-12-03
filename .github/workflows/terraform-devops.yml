@@ -103,9 +103,7 @@ jobs:
             echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
           fi
 
-      # Install the latest version of Terraform CLI
-      - name: Install Terraform
-        uses: hashicorp/setup-terraform@v3.1.0
+      
 
 
       # AzureRM Backend Configuration
@@ -213,6 +211,12 @@ jobs:
             cat backend.tf
 
           fi
+      
+
+      # Install the latest version of Terraform CLI
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3.1.0
+        
 
       - name: Terraform Init
         run: |
