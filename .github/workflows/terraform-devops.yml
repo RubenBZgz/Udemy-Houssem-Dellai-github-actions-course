@@ -14,7 +14,6 @@ on:
 env:
   WORKING_DIRECTORY: Terraform
   BACKEND_TYPE: 'hcp' #'azurerm' is also supported
-  #MY_PAT: $#{{ secrets.PAT_RENEW_SECRET_KEY }}
 
 jobs:
   Rotate-HCP-Token:
@@ -24,9 +23,6 @@ jobs:
       HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
       TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
       PAT_RENEW_SECRET_KEY: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-
-
-    #secrets: inherit
   
   #Check-spelling:
     #uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal
@@ -88,8 +84,6 @@ jobs:
           ls -al
 
       
-
-
       - name: Login to Azure with Service Principal
         uses: Azure/login@v2
         with:
@@ -133,10 +127,6 @@ jobs:
         if: ${{ env.BACKEND_TYPE == 'azurerm' }}
         with:
           # Azure CLI version to be used to execute the script. If not provided, latest version is used
-          # azcliversion: 2.34.1 # optional, default is agentazcliversion
-          # #!/usr/bin/env pwsh
-
-          # Ejecutado en BASH
           inlineScript: |
             cd ${{ matrix.project }}
             echo "Directory updated: "
@@ -181,8 +171,7 @@ jobs:
                 --name $BACKEND_CONTAINER_NAME 
             fi
 
-            # generate backend.tf file
-            # cd $WORKING_DIRECTORY
+            # Generate backend.tf file
             if [ ! -f ./backend.tf ]; then
               echo "backend.tf not found!"
 
@@ -197,10 +186,9 @@ jobs:
               } 
             }
             EOT
-              
               cat backend.tf
-
             fi
+
 
       # HCP Terraform Backend Configuration
       - name: HCP Terraform Backend
@@ -226,13 +214,10 @@ jobs:
               workspaces {
                 name = "$HCP_WORKSPACE"
               }
-
             }
           }
           EOT
-            
             cat backend.tf
-
           fi
       
 
@@ -257,6 +242,7 @@ jobs:
           fi
           terraform init -upgrade -input=false
 
+
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         id: format
@@ -268,6 +254,7 @@ jobs:
 
           terraform fmt -check
         continue-on-error: true
+
 
       - name: Terraform Plan
         env:
@@ -294,6 +281,7 @@ jobs:
           # # show only the changes
           # cat tfplan.json | jq '[.resource_changes[] | {type: .type, name: .change.after.name, actions: .change.actions[]}]' 
           # cat tfplan.json | jq -r '(.resource_changes[] | [.change.actions[], .type, .change.after.name]) | @tsv'
+
 
       # Terraform login is not necessary as we are using TF_TOKEN_app_terraform_io secret
       - name: Add Terraform Plan Comment
@@ -325,6 +313,7 @@ jobs:
               body: output
             })
 
+            
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Terraform login is not necessary as we are using TF_TOKEN_app_terraform_io secret
       - name: Terraform Apply
