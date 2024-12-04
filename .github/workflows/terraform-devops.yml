@@ -1,19 +1,26 @@
 name: "Create Infra with Terraform"
 
 on:
-  #push:
-    #branches: [Personal]
-    #paths: .github/workflows/terraform-devops.yml
-  
   pull_request:
-    branches: none # [ main ]
-  
+    branches: main # [ main ]
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      BACKEND_TYPE:
+        description: "Select the project to run Terraform commands"
+        required: true
+        type: choice
+        options:
+          - hcp
+          - azurerm
+          - None
+        default:
+          hcp
 
 env:
   WORKING_DIRECTORY: Terraform
-  BACKEND_TYPE: 'hcp' #'azurerm' is also supported
+  DEFAULT_BACKEND_TYPE: hcp
 
 jobs:
   Rotate-HCP-Token:
@@ -23,10 +30,10 @@ jobs:
       HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
       TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
       PAT_RENEW_SECRET_KEY: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-  
+
   #Check-spelling:
-    #uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal
-  
+  #uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal
+
   scan-terraform-config:
     runs-on: ubuntu-latest
     name: Scan Terraform with Checov
@@ -57,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [Rotate-HCP-Token, scan-terraform-config]
-    env: 
+    env:
       TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new-token }}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -65,31 +72,22 @@ jobs:
       run:
         shell: bash
         working-directory: ${{ env.WORKING_DIRECTORY }}
-    
+
     strategy:
       matrix:
-        project: [07_Azure_Container_Apps]  # List of project folders
-        
+        project: [07_Azure_Container_Apps] # List of project folders
 
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v2
-      
-      - name: Display Current Directory
-        run: |
-          echo "Current directory:"
-          pwd
-          echo "Listing contents of the current directory:"
-          ls -al
 
-      
       - name: Login to Azure with Service Principal
         uses: Azure/login@v2
         with:
           # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
           # az role assignment create --assignee <service-principal-id> --role Contributor --scope /subscriptions/<subscription-id>
-          # creds: ${#{ secrets.AZURE_CREDENTIALS }}
+          # Credentials: ${#{ secrets.AZURE_CREDENTIALS }}. You can also use the following credentials:
           auth-type: SERVICE_PRINCIPAL
           creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
@@ -99,7 +97,6 @@ jobs:
           azcliversion: 2.30.0
           inlineScript: |
             az account show
-            az storage -h
 
       - name: Debug Token
         run: |
@@ -112,9 +109,6 @@ jobs:
             echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
           fi
 
-      
-
-
       # AzureRM Backend Configuration
       - name: AzureRM Terraform Backend
         uses: Azure/cli@v2
@@ -124,7 +118,7 @@ jobs:
           BACKEND_RESOURCE_GROUP_NAME: ${{ secrets.BACKEND_RESOURCE_GROUP_NAME }}
           BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER_NAME }}
           BACKEND_KEY: ${{ secrets.BACKEND_KEY }}
-        if: ${{ env.BACKEND_TYPE == 'azurerm' }}
+        if: ${{ (inputs.BACKEND_TYPE == 'azurerm' || env.DEFAULT_BACKEND_TYPE == 'azurerm') &&  inputs.BACKEND_TYPE != 'hcp' }}
         with:
           # Azure CLI version to be used to execute the script. If not provided, latest version is used
           inlineScript: |
@@ -189,19 +183,18 @@ jobs:
               cat backend.tf
             fi
 
-
       # HCP Terraform Backend Configuration
       - name: HCP Terraform Backend
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           HCP_WORKSPACE: ${{ secrets.HCP_WORKSPACE }}
-        if: ${{ env.BACKEND_TYPE == 'hcp' }}
+        if: ${{ (inputs.BACKEND_TYPE == 'hcp' || env.DEFAULT_BACKEND_TYPE == 'hcp') &&  inputs.BACKEND_TYPE != 'azurerm' }}
         run: |
           cd ${{ matrix.project }}
           echo "Directory updated: "
           pwd
           echo ""
-          
+
           if [ ! -f ./backend.tf ]; then
             echo "backend.tf not found!"
 
@@ -219,12 +212,10 @@ jobs:
           EOT
             cat backend.tf
           fi
-      
 
       # Install the latest version of Terraform CLI
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3.1.0
-        
 
       - name: Terraform Init
         run: |
@@ -242,11 +233,10 @@ jobs:
           fi
           terraform init -upgrade -input=false
 
-
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         id: format
-        run: | 
+        run: |
           cd ${{ matrix.project }}
           echo "Directory updated: "
           pwd
@@ -254,7 +244,6 @@ jobs:
 
           terraform fmt -check
         continue-on-error: true
-
 
       - name: Terraform Plan
         env:
@@ -269,7 +258,7 @@ jobs:
           echo "Directory updated: "
           pwd
           echo ""
-          
+
           terraform plan -out tfplan -input=false -var="subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}"
 
           # # show the tfplan file
@@ -281,7 +270,6 @@ jobs:
           # # show only the changes
           # cat tfplan.json | jq '[.resource_changes[] | {type: .type, name: .change.after.name, actions: .change.actions[]}]' 
           # cat tfplan.json | jq -r '(.resource_changes[] | [.change.actions[], .type, .change.after.name]) | @tsv'
-
 
       # Terraform login is not necessary as we are using TF_TOKEN_app_terraform_io secret
       - name: Add Terraform Plan Comment
@@ -313,14 +301,13 @@ jobs:
               body: output
             })
 
-            
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Terraform login is not necessary as we are using TF_TOKEN_app_terraform_io secret
       - name: Terraform Apply
         #i f: github.ref == 'refs/heads/main' && github.event_name == 'push'
         #env:
-          #ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          #ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          #ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          #ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        #ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+        #ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        #ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+        #ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: echo 'funciona' #terraform apply -auto-approve -input=false tfplan
