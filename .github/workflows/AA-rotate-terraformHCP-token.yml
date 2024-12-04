@@ -66,6 +66,7 @@ jobs:
 
       
       - id: Rotate-Terraform-API-Token
+        name: Rotate-Terraform-API-Token
         env:
           HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
           OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
@@ -87,6 +88,7 @@ jobs:
           
           # Use jq to parse and get the value of the team id "id"
           team_id=$(echo "$RESPONSE" | jq -r '.data[0].id')
+          echo "Team_ID: $team_id"
 
 
           # Renew Team API Token with an expiration of 1 hour
@@ -112,6 +114,7 @@ jobs:
 
           
           token_id=$(echo "$RESPONSE" | jq -r '.data.attributes.token')
+          echo "Token_ID: $token_id"
 
 
           # Check if the new token was successfully retrieved and update GitHub secret token to use Terraform
