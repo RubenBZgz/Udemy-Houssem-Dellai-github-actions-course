@@ -1,3 +1,9 @@
+# azure-container-apps-ci-cd
+Prerequisites:
+  - terraform-devops.yml RUNNING. We need the resources to be created
+  - Secrets:
+    - AZURE_CREDENTIALS. az ad sp create-for-rbac -n "spn-aca-github" --role Contributor --scope /subscriptions/$SUBSCRIPTION_ID --sdk-auth
+
 # terraform-devops.yml
 Prerequites:
 - Azure Account
