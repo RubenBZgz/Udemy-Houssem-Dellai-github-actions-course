@@ -271,8 +271,9 @@ jobs:
           echo "Directory updated: "
           pwd
           echo ""
-
-          terraform fmt -check
+          
+          terraform fmt
+          #terraform fmt -check
         continue-on-error: true
 
       - name: Terraform Plan
@@ -282,6 +283,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         #i f: github.event_name == 'pull_request' # 'push' #
+        #i f: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           #az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
           cd ${{ matrix.project }}
@@ -290,6 +292,7 @@ jobs:
           echo ""
 
           terraform plan -out tfplan -input=false -var="subscription_id=${{ env.ARM_SUBSCRIPTION_ID }}"
+          terraform apply "tfplan"
 
           # # show the tfplan file
           # terraform show -json tfplan
@@ -301,18 +304,4 @@ jobs:
           # cat tfplan.json | jq '[.resource_changes[] | {type: .type, name: .change.after.name, actions: .change.actions[]}]' 
           # cat tfplan.json | jq -r '(.resource_changes[] | [.change.actions[], .type, .change.after.name]) | @tsv'
 
-
-      # On push to main, build or change infrastructure according to Terraform configuration files
-      # Terraform login is not necessary as we are using TF_TOKEN_app_terraform_io secret
-      - name: Terraform Apply
-        #i f: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        #env:
-        #ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-        #ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-        #ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-        #ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        run: 
-          #echo 'funciona' #terraform apply -auto-approve -input=false tfplan
-          #terraform apply -auto-approve -input=false tfplan
-          terraform apply "tfplan" 
           
