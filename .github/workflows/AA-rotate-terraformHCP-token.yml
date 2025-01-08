@@ -4,7 +4,7 @@ on:
   #push:
     #branches: [Personal]
   schedule:
-    - cron: "0 0 1 * *" # Runs on the 1st of every month. 30 days of expiration time
+    - cron: "0 * * * *" # Se ejecuta al inicio de cada hora
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch: 
@@ -92,7 +92,7 @@ jobs:
 
 
           # Renew Team API Token with an expiration of 1 hour
-          expiration_date=$(date -u -d '+1 hour' +"%Y-%m-%dT%H:%M:%SZ")
+          expiration_date=$(date -u -d '+2 hour' +"%Y-%m-%dT%H:%M:%SZ")
           cat <<EOF > payload.json
           {
             "data": {
