@@ -86,12 +86,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          auth-type: SERVICE_PRINCIPAL
-          enable-AzPSSession: true
-
       - name: Login to Azure with Service Principal
         uses: Azure/login@v2
         with:
@@ -101,6 +95,18 @@ jobs:
           auth-type: SERVICE_PRINCIPAL
           creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
+          
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          #client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+          auth-type: SERVICE_PRINCIPAL
+          enable-AzPSSession: true
+        
+
+      
       - name: Azure CLI script
         uses: azure/cli@v2
         with:
