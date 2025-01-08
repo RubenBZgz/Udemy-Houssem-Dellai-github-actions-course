@@ -314,5 +314,5 @@ jobs:
         run: 
           #echo 'funciona' #terraform apply -auto-approve -input=false tfplan
           #terraform apply -auto-approve -input=false tfplan
-          terraform apply "tfplan" -auto-approve -input=false
+          terraform apply "tfplan" 
           
