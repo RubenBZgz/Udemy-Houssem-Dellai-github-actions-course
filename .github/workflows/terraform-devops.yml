@@ -7,6 +7,17 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
+      AZURE_LOGIN:
+        description: "Type of login to Azure"
+        required: true
+        type: choice
+        options:
+          - OIDC
+          - SERVICE_PRINCIPAL
+          - None
+        default:
+          None
+          
       BACKEND_TYPE:
         description: "Select the project to run Terraform commands"
         required: true
@@ -21,6 +32,7 @@ on:
 env:
   WORKING_DIRECTORY: Terraform
   DEFAULT_BACKEND_TYPE: hcp
+  DEFAULT_AZURE_LOGIN: SERVICE_PRINCIPAL
 
 permissions:
   id-token: write
@@ -86,8 +98,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+
+        
       - name: Login to Azure with Service Principal
         uses: Azure/login@v2
+        if: ${{ (inputs.AZURE_LOGIN == 'SERVICE_PRINCIPAL') || (inputs.AZURE_LOGIN == 'None' && env.DEFAULT_AZURE_LOGIN == 'SERVICE_PRINCIPAL') }}
         with:
           # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
           # az role assignment create --assignee <service-principal-id> --role Contributor --scope /subscriptions/<subscription-id>
@@ -95,14 +110,13 @@ jobs:
           auth-type: SERVICE_PRINCIPAL
           creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
-
+        # Login with OIDC. https://github.com/Azure/login?tab=readme-ov-file#login-with-openid-connect-oidc-recommended
       - uses: azure/login@v2
+        if: ${{ (inputs.AZURE_LOGIN == 'OIDC') || (inputs.AZURE_LOGIN == 'None' && env.DEFAULT_AZURE_LOGIN == 'OIDC') }}
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-          auth-type: SERVICE_PRINCIPAL
           enable-AzPSSession: true
         
 
