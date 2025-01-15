@@ -1,8 +1,6 @@
 name: AA-rotate-terraformHCP-token
 
 on:
-  #push:
-    #branches: [Personal]
   schedule:
     - cron: "0 * * * *" # Se ejecuta al inicio de cada hora
 
@@ -121,17 +119,14 @@ jobs:
           if [ -n "$token_id" ] && [ "$token_id" != "null" ]; then
             # Update GitHub secret with the new token
             gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
+            echo "Token rewened"
             echo "GitHub secret updated successfully."
 
             # Send the new token value to Github Outputs
             echo "new-token=$token_id" >> $GITHUB_OUTPUT
+            #Use this for reference: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
             
           else
             echo "Failed to retrieve new token."
             exit 1
           fi
-
-        #Check new token output is being sent
-      - name: Debug Output
-        run: |
-          echo "New Token: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}"
