@@ -94,6 +94,12 @@ jobs:
         project: [07_Azure_Container_Apps] # List of project folders
 
     steps:
+      - name: Mask and Export Terraform Token
+        run: |
+          echo "::add-mask::${{ needs.Rotate-HCP-Token.outputs.new-token }}"
+          echo "TF_TOKEN_app_terraform_io=${{ needs.Rotate-HCP-Token.outputs.new-token }}" >> $GITHUB_ENV
+
+
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v2
