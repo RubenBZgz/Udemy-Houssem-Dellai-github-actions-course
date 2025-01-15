@@ -312,6 +312,7 @@ jobs:
     steps:
       - name: Trigger Reusable Workflow via API
         run: |
-          gh workflow run AA-azure-container-apps-ci-cd.yml \
-            --ref ${{ github.ref_name }} \
-            --repo RubenBZgz/Udemy-Houssem-Dellai-github-actions-course
+          echo "Está pendiente, falta definir GH Token"
+          #gh workflow run AA-azure-container-apps-ci-cd.yml \
+            #--ref ${{ github.ref_name }} \
+            #--repo RubenBZgz/Udemy-Houssem-Dellai-github-actions-course
