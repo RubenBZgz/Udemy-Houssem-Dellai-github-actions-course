@@ -1,7 +1,8 @@
 Secrets:
 BACKEND_ORGANIZATION = Organization name of your HCP Terraform organization
 TF_API_TOKEN = API token to login inside my HCP Terraform workspace teams and lauch terraform init, apply...
-
+GITHUB_PAT = Fine-grained personal access token to update secrets of the repository
+https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
 
 Requirements:
@@ -12,6 +13,29 @@ https://developer.hashicorp.com/terraform/language/backend/remote
 1. Terraform login
 2. cd tfc-getting-started
 3. scripts/setup.sh
+4. Create terraform backend like this
+```
+terraform {
+
+  /*  NORMAL AZURE BACKEND HARDCODED
+  backend "azurerm" {
+    resource_group_name   = ""
+    storage_account_name  = ""
+    container_name        = ""
+    key                   = ""
+  } */
+
+  # Terraform Cloud Backend
+  cloud {
+    organization = "Your HCP Terraform Organization"
+
+    workspaces {
+      name = "Your HCP Terraform Workspace"
+    }
+  }
+}
+```
+
 
 In my case, I'm going to use a variable set to use this credentials across multiple proyects. You can create it in your workspace settings.
 

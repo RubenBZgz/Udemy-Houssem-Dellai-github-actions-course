@@ -2,22 +2,131 @@ name: AA-rotate-terraformHCP-token
 
 on:
   schedule:
-    - cron: "0 0 1 * *" # Runs on the 1st of every month. 30 days of expiration time
+    - cron: "0 * * * *" # Se ejecuta al inicio de cada hora
 
-  # Allows you to run this workflow manually from the Actions tab 
-  workflow_dispatch:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch: 
+  
+  # Allow you to use this workflow in another WF
+  workflow_call:
+    secrets:
+      personal_access_token:
+        required: true
+      HCP_ORGANIZATION:
+        required: true
+      TF_API_TOKEN:
+        required: true
+      PAT_RENEW_SECRET_KEY: 
+        required: true
+
+    # Map the workflow outputs to job outputs
+    outputs:
+      new-token:
+        description: "The rotated Terraform API token"
+        value: ${{ jobs.rotate-token.outputs.new-token }}
 
 jobs:
-  rotate-token:
+  check-token:
     runs-on: ubuntu-latest
-
-    # Inside my workspace, I'm going to use a Team Token for GitHub Actions.
-    # In my case, It uses owners team, however, you should create a new team with limitations.
     steps:
-      - name: Rotate Terraform API Token
+      - name: Set MY_PAT
+        env:
+          SECRET_PAT: ${{ secrets.PAT_RENEW_SECRET_KEY }}
         run: |
-          # Example of how you could interact with the Terraform API to rotate the token
-          # and then update the GitHub secret with the new token.
-          OLD_TOKEN= ${{ secrets.TF_API_TOKEN }} 
-          NEW_TOKEN=$(curl -X POST https://app.terraform.io/api/v2/organizations/${{ secrets.BACKEND_ORGANIZATION }}/authentication-tokens -H "Authorization: Bearer OLD_TOKEN" | jq .new_token)
-          gh secret set TF_API_TOKEN -b "$NEW_TOKEN"
+          echo "INPUT: ${{ secrets.personal_access_token }}"
+          if [[ -n "${{ secrets.personal_access_token }}" ]]; then
+            echo "MY_PAT=${{ secrets.personal_access_token }}" >> $GITHUB_ENV
+          elif [[ -n "$SECRET_PAT" ]]; then
+            echo "MY_PAT=$SECRET_PAT" >> $GITHUB_ENV
+          else
+            echo "No PAT provided. Exiting."
+            exit 1
+          fi
+
+      - name: Check PAT Validity
+        run: |
+          curl -H "Authorization: token $MY_PAT" https://api.github.com/user || exit 1
+
+
+  rotate-token:
+    needs: check-token
+    runs-on: ubuntu-latest
+    
+    # TF API Token Output. It will be used to use terraform commands later.
+    outputs:
+      new-token: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
+
+
+    # In my case, I'm using the owners team token as I have a free account. However, you should create a new team with limitations.
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@master
+
+      
+      - id: Rotate-Terraform-API-Token
+        name: Rotate-Terraform-API-Token
+        env:
+          HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
+          OLD_TOKEN: ${{ secrets.TF_API_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+          REPOSITORY: ${{ github.repository }}
+
+        run: |
+          REPOSITORY=$REPOSITORY
+          TOKEN=$OLD_TOKEN
+          ORGANIZATION=$HCP_ORGANIZATION
+
+
+          # Get Team API Token id
+          RESPONSE=$(curl \
+            --header "Authorization: Bearer $TOKEN" \
+            --header "Content-Type: application/vnd.api+json" \
+            --request GET https://app.terraform.io/api/v2/organizations/$ORGANIZATION/teams)
+          
+          
+          # Use jq to parse and get the value of the team id "id"
+          team_id=$(echo "$RESPONSE" | jq -r '.data[0].id')
+          #echo "Team_ID: $team_id"
+
+
+          # Renew Team API Token with an expiration of 1 hour
+          expiration_date=$(date -u -d '+2 hour' +"%Y-%m-%dT%H:%M:%SZ")
+          cat <<EOF > payload.json
+          {
+            "data": {
+              "type": "authentication-token",
+              "attributes": {
+                "expired-at": "$expiration_date"
+              }
+            }
+          }
+          EOF
+
+
+          RESPONSE=$(curl \
+            --header "Authorization: Bearer $TOKEN" \
+            --header "Content-Type: application/vnd.api+json" \
+            --request POST \
+            --data @payload.json \
+            https://app.terraform.io/api/v2/teams/$team_id/authentication-token)
+
+          
+          token_id=$(echo "$RESPONSE" | jq -r '.data.attributes.token')
+          #echo "Token_ID: $token_id"
+
+
+          # Check if the new token was successfully retrieved and update GitHub secret token to use Terraform
+          if [ -n "$token_id" ] && [ "$token_id" != "null" ]; then
+            # Update GitHub secret with the new token
+            gh secret set TF_API_TOKEN --repo $REPOSITORY --body "$token_id"
+            echo "Token rewened"
+            echo "GitHub secret updated successfully."
+
+            # Send the new token value to Github Outputs
+            echo "new-token=$token_id" >> $GITHUB_OUTPUT
+            #Use this for reference: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
+            
+          else
+            echo "Failed to retrieve new token."
+            exit 1
+          fi

@@ -12,9 +12,13 @@
 *tfplan
 *tfplan.json
 
-# Backend files (It's not necessary in this case because I use Terraform Cloud)
-# *backend.tf
-# *backend.tfvars
+# Backend files 
+backend.tf
+backend.tfvars
+05_Web_Sql_database/backend.tf
+*.tfvars
+
+
 
 # Private Keys or Sensitive Files
 *.pem
@@ -51,4 +55,3 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
-# .gitignore
