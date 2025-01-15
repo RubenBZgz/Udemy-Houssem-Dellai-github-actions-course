@@ -98,21 +98,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-
-
       - name: Login to Azure with Service Principal
         uses: Azure/login@v2
-        if: ${{ (inputs.AZURE_LOGIN == 'SERVICE_PRINCIPAL') || (inputs.AZURE_LOGIN == 'None' && env.DEFAULT_AZURE_LOGIN == 'SERVICE_PRINCIPAL') }}
+        if: ${{ (inputs.AZURE_LOGIN == 'SERVICE_PRINCIPAL') || ( (inputs.AZURE_LOGIN == 'None' || inputs.AZURE_LOGIN == '') && env.DEFAULT_AZURE_LOGIN == 'SERVICE_PRINCIPAL') }}
         with:
           # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
           # az role assignment create --assignee <service-principal-id> --role Contributor --scope /subscriptions/<subscription-id>
           # Credentials: ${#{ secrets.AZURE_CREDENTIALS }}. You can also use the following credentials:
           auth-type: SERVICE_PRINCIPAL
-          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+          #creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+          creds: ${{ secrets.AZURE_CREDENTIALS }}  # Uses the AZURE_CREDENTIALS secret for login
+          enable-AzPSSession: true  #Needed in order to use the credentials in other steps
 
         # Login with OIDC. https://github.com/Azure/login?tab=readme-ov-file#login-with-openid-connect-oidc-recommended
       - uses: azure/login@v2
-        if: ${{ (inputs.AZURE_LOGIN == 'OIDC') || (inputs.AZURE_LOGIN == 'None' && env.DEFAULT_AZURE_LOGIN == 'OIDC') }}
+        if: ${{ (inputs.AZURE_LOGIN == 'OIDC') || ( (inputs.AZURE_LOGIN == 'None' || inputs.AZURE_LOGIN == '') && env.DEFAULT_AZURE_LOGIN == 'OIDC') }}
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -276,7 +276,7 @@ jobs:
           #terraform fmt -check
         continue-on-error: true
 
-      - name: Terraform Plan
+      - name: Terraform Plan / Apply
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -303,5 +303,16 @@ jobs:
           # # show only the changes
           # cat tfplan.json | jq '[.resource_changes[] | {type: .type, name: .change.after.name, actions: .change.actions[]}]' 
           # cat tfplan.json | jq -r '(.resource_changes[] | [.change.actions[], .type, .change.after.name]) | @tsv'
-
-          
+      
+# Now I need to call .github/workflows/AA-azure-container-apps-ci-cd.yml if the folder is 07...
+  Deploy-Container:
+    name: Deploy Azure Container
+    runs-on: ubuntu-latest
+    #needs: [Rotate-HCP-Token, scan-terraform-config]
+    steps:
+      - name: Trigger Reusable Workflow via API
+        run: |
+          echo "Está pendiente, falta definir GH Token"
+          #gh workflow run AA-azure-container-apps-ci-cd.yml \
+            #--ref ${{ github.ref_name }} \
+            #--repo RubenBZgz/Udemy-Houssem-Dellai-github-actions-course
