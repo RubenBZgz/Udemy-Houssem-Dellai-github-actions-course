@@ -51,6 +51,8 @@ jobs:
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
+        env:
+          LOWERCASE_OWNER: ${{ env.lowercase_owner }}
         with:
           push: true
           tags: ghcr.io/${{env.LOWERCASE_OWNER}}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
