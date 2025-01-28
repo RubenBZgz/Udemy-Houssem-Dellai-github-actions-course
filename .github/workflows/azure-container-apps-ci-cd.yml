@@ -49,7 +49,6 @@ jobs:
           password: ${{ github.token }}
 
 
-      # EL ERROR ESTÁ AQUÍ, FORBIDDEN. EL PUSH LO INTENTA SUBIR A LA CUENTA DE HOUSSEM DELLAI
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
         with:
@@ -74,7 +73,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           registryUrl: ghcr.io
-          imageToDeploy: ghcr.io/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          imageToDeploy: ghcr.io/${{env.LOWERCASE_OWNER}}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
           targetPort: 3500
           ingress: external
           containerAppName: ${{ env.CONTAINERAPPS_APP }}
