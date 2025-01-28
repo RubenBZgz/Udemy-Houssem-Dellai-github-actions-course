@@ -3,12 +3,11 @@ name: Build and deploy a container to an Azure Container Apps - ACA
 
 env:
   #IMAGE_NAME comes from: https://github.com/HoussemDellai/aca-course package
-  #IMAGE_NAME: houssemdellai/containerapps-album-api
   IMAGE_NAME: containerapps-album-api
   CONTAINERAPPS_APP: album-backend-api
   CONTAINERAPPS_ENVIRONMENT: aca-environment
   RESOURCE_GROUP: rg-containerapps-github-actions
-  OWNER: unassigned 
+  OWNER: rubenbzgz    # Change this to your own username in lower case 
 
 on:
   push:
@@ -26,23 +25,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Extract repository owner and convert to lowercase
-        id: extract-owner
-        env:
-          GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-          REPOSITORY: ${{ github.repository }}
-        run: |
-          # Extract the repository owner from GITHUB_REPOSITORY
-          REPO_OWNER=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f1)
-
-          # Convert the repository owner to lowercase
-          LOWERCASE_OWNER=$(echo "${REPO_OWNER}" | tr '[:upper:]' '[:lower:]')
-
-          # Set as an output variable
-          echo "Lower case owner: $LOWERCASE_OWNER"
-          gh variable set OWNER --repo $REPOSITORY --body "$LOWERCASE_OWNER"
-
-
       - uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
