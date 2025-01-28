@@ -73,6 +73,8 @@ jobs:
 
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
+        env:
+          LOWERCASE_OWNER: ${{ env.lowercase_owner }}
         with:
           registryUrl: ghcr.io
           imageToDeploy: ghcr.io/${{env.LOWERCASE_OWNER}}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
