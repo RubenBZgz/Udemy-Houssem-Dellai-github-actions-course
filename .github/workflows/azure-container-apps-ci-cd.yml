@@ -3,7 +3,8 @@ name: Build and deploy a container to an Azure Container Apps - ACA
 
 env:
   #IMAGE_NAME comes from: https://github.com/HoussemDellai/aca-course package
-  IMAGE_NAME: houssemdellai/containerapps-album-api
+  #IMAGE_NAME: houssemdellai/containerapps-album-api
+  IMAGE_NAME: RubenBZgz/containerapps-album-api
   CONTAINERAPPS_APP: album-backend-api
   CONTAINERAPPS_ENVIRONMENT: aca-environment
   RESOURCE_GROUP: rg-containerapps-github-actions
@@ -36,19 +37,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: user/app:latest
 
       # EL ERROR ESTÁ AQUÍ, FORBIDDEN. EL PUSH LO INTENTA SUBIR A LA CUENTA DE HOUSSEM DELLAI
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
         with:
           push: true
-          #tags: ghcr.io/${{ env.IMAGE_NAME }}:${{ github.run_number }}
-          tags: user/app:latest
+          tags: ghcr.io/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          #tags: user/app:latest
           file: ./backend_api/backend_api_csharp/Dockerfile
           context: ./backend_api/backend_api_csharp
 
