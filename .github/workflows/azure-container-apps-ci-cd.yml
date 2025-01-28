@@ -25,6 +25,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Extract repository owner and convert to lowercase
+        id: extract-owner
+        run: |
+          # Extract the repository owner from GITHUB_REPOSITORY
+          REPO_OWNER=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f1)
+          # Convert the repository owner to lowercase
+          LOWERCASE_OWNER=$(echo "${REPO_OWNER}" | tr '[:upper:]' '[:lower:]')
+          # Set as an output variable
+          echo "lowercase_owner=${LOWERCASE_OWNER}" >> $GITHUB_ENV
+          echo "Lowercase Repository Owner: ${LOWERCASE_OWNER}"
+
       - uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
