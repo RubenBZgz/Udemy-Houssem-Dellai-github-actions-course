@@ -8,7 +8,7 @@ env:
   CONTAINERAPPS_APP: album-backend-api
   CONTAINERAPPS_ENVIRONMENT: aca-environment
   RESOURCE_GROUP: rg-containerapps-github-actions
-  OWNER: unassigned 
+  OWNER: rubenbzgzgz  # This environment variable has to be changed manually before executing this workflow 
 
 on:
   push:
@@ -26,22 +26,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Extract repository owner and convert to lowercase
-        id: extract-owner
-        run: |
-          # Extract the repository owner from GITHUB_REPOSITORY
-          REPO_OWNER=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f1)
-
-          # Convert the repository owner to lowercase
-          LOWERCASE_OWNER=$(echo "${REPO_OWNER}" | tr '[:upper:]' '[:lower:]')
-
-          # Set as an output variable
-          echo "OWNER=${LOWERCASE_OWNER}" >> $GITHUB_ENV
-          echo "Lowercase Repository Owner: ${OWNER}"
-
-          # Set as an output variable
-          echo "::set-output name=lowercase_owner::${LOWERCASE_OWNER}"
-
       - uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
@@ -69,8 +53,6 @@ jobs:
       contents: none
     runs-on: ubuntu-latest
     needs: build-push-container-image
-    env:
-      OWNER: ${{ needs.extract-owner.outputs.lowercase_owner }}
 
     steps:
       - uses: azure/login@v1
