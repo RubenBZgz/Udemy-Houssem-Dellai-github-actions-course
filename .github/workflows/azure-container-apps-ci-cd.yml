@@ -28,6 +28,8 @@ jobs:
     steps:
       - name: Extract repository owner and convert to lowercase
         id: extract-owner
+        env:
+          GH_TOKEN: ${{ secrets.PAT_RENEW_SECRET_KEY }}
         run: |
           # Extract the repository owner from GITHUB_REPOSITORY
           REPO_OWNER=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f1)
@@ -58,7 +60,6 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{env.OWNER}}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
-          #tags: user/app:latest
           file: ./backend_api/backend_api_csharp/Dockerfile
           context: ./backend_api/backend_api_csharp
 
