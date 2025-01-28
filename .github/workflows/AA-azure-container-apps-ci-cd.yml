@@ -36,7 +36,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-          
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: user/app:latest
+
       # EL ERROR ESTÁ AQUÍ, FORBIDDEN. EL PUSH LO INTENTA SUBIR A LA CUENTA DE HOUSSEM DELLAI
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
