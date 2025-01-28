@@ -8,6 +8,7 @@ env:
   CONTAINERAPPS_APP: album-backend-api
   CONTAINERAPPS_ENVIRONMENT: aca-environment
   RESOURCE_GROUP: rg-containerapps-github-actions
+  OWNER: unassigned
 
 on:
   push:
@@ -30,11 +31,13 @@ jobs:
         run: |
           # Extract the repository owner from GITHUB_REPOSITORY
           REPO_OWNER=$(echo "${GITHUB_REPOSITORY}" | cut -d'/' -f1)
+
           # Convert the repository owner to lowercase
           LOWERCASE_OWNER=$(echo "${REPO_OWNER}" | tr '[:upper:]' '[:lower:]')
+
           # Set as an output variable
-          echo "lowercase_owner=${LOWERCASE_OWNER}" >> $GITHUB_ENV
-          echo "Lowercase Repository Owner: ${LOWERCASE_OWNER}"
+          echo "OWNER=${LOWERCASE_OWNER}" >> $GITHUB_ENV
+          echo "Lowercase Repository Owner: ${OWNER}"
 
       - uses: actions/checkout@v3
 
@@ -51,11 +54,9 @@ jobs:
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
-        env:
-          LOWERCASE_OWNER: ${{ env.lowercase_owner }}
         with:
           push: true
-          tags: ghcr.io/${{env.LOWERCASE_OWNER}}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          tags: ghcr.io/${{env.OWNER}}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
           #tags: user/app:latest
           file: ./backend_api/backend_api_csharp/Dockerfile
           context: ./backend_api/backend_api_csharp
@@ -73,11 +74,9 @@ jobs:
 
       - name: Build and deploy Container App
         uses: azure/container-apps-deploy-action@v1
-        env:
-          LOWERCASE_OWNER: ${{ env.lowercase_owner }}
         with:
           registryUrl: ghcr.io
-          imageToDeploy: ghcr.io/${{env.LOWERCASE_OWNER}}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
+          imageToDeploy: ghcr.io/${{env.OWNER}}/${{ env.IMAGE_NAME }}:${{ github.run_number }}
           targetPort: 3500
           ingress: external
           containerAppName: ${{ env.CONTAINERAPPS_APP }}
