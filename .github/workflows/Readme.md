@@ -1,3 +1,10 @@
+# AA-run-trivy.yml and AA-tfsec.yml
+This tools are used to analyze the security of your code.
+- Code scanning needs to be allowed.
+- Personal Access Token permissions:
+    - Code scanning alerts
+    - Repository security advisories
+
 # azure-container-apps-ci-cd
 Prerequisites:
   - terraform-devops.yml RUNNING. We need the resources to be created

@@ -1,6 +1,6 @@
+/*
 output "container_app_details" {
   value = {
-
     name                = azurerm_container_app.example.name
     resource_group_name = azurerm_container_app.example.resource_group_name
     ingress_target_port = azurerm_container_app.example.ingress[0].target_port
@@ -11,3 +11,4 @@ output "container_app_details" {
     fqdn                = azurerm_container_app.example.ingress[0].fqdn
   }
 }
+*/
