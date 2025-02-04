@@ -4,7 +4,6 @@ on:
   pull_request:
     branches: main # [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
       AZURE_LOGIN:
@@ -39,17 +38,6 @@ permissions:
   contents: read
 
 jobs:
-#  Rotate-HCP-Token:
-#    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
-#    secrets:
-#      personal_access_token: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-#      HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
-#      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-#      PAT_RENEW_SECRET_KEY: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-
-  #Check-spelling:
-  #uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal
-
   scan-terraform-config:
     runs-on: ubuntu-latest
     name: Scan Terraform with Checov
@@ -81,12 +69,6 @@ jobs:
     needs: [scan-terraform-config]
     env: 
       TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
-    #env:
-      #TF_TOKEN_app_terraform_io: $#{{ needs.Rotate-HCP-Token.outputs.new-token }}
-
-    # TENGO QUE PONER EL SECRETO EN TODOS LOS STEPS QUE FALLEN Y PROBAR QUE SE ARREGLE SIN USAR ENV
-    #env: 
-      #TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
     defaults:
       run:
@@ -292,15 +274,3 @@ jobs:
           # cat tfplan.json | jq '[.resource_changes[] | {type: .type, name: .change.after.name, actions: .change.actions[]}]' 
           # cat tfplan.json | jq -r '(.resource_changes[] | [.change.actions[], .type, .change.after.name]) | @tsv'
       
-# Now I need to call .github/workflows/AA-azure-container-apps-ci-cd.yml if the folder is 07...
-  Deploy-Container:
-    name: Deploy Azure Container
-    runs-on: ubuntu-latest
-    #needs: [Rotate-HCP-Token, scan-terraform-config]
-    steps:
-      - name: Trigger Reusable Workflow via API
-        run: |
-          echo "Está pendiente, falta definir GH Token"
-          #gh workflow run AA-azure-container-apps-ci-cd.yml \
-            #--ref ${{ github.ref_name }} \
-            #--repo RubenBZgz/Udemy-Houssem-Dellai-github-actions-course
