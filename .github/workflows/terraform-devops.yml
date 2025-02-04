@@ -12,7 +12,7 @@ on:
         required: true
         type: choice
         options:
-          - OIDC
+          - OIDC 
           - SERVICE_PRINCIPAL
           - None
         default:
@@ -78,12 +78,11 @@ jobs:
   deploy-azure-infra-terraform:
     name: Deploy to Azure with Terraform
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' }}
     needs: [Rotate-HCP-Token, scan-terraform-config]
     env:
       TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new-token }}
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
@@ -94,7 +93,6 @@ jobs:
         project: [07_Azure_Container_Apps] # List of project folders
 
     steps:
-      # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -119,8 +117,6 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
         
-
-      
       - name: Azure CLI script
         uses: azure/cli@v2
         with:
@@ -282,8 +278,6 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        #i f: github.event_name == 'pull_request' # 'push' #
-        #i f: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           #az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
           cd ${{ matrix.project }}
