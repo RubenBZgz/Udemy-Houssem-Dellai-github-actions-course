@@ -79,11 +79,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref == 'refs/heads/main' && 'production' }}
     needs: [scan-terraform-config]
+    env: 
+      TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
     #env:
       #TF_TOKEN_app_terraform_io: $#{{ needs.Rotate-HCP-Token.outputs.new-token }}
 
     # TENGO QUE PONER EL SECRETO EN TODOS LOS STEPS QUE FALLEN Y PROBAR QUE SE ARREGLE SIN USAR ENV
-    #secrets: 
+    #env: 
       #TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
     defaults:
