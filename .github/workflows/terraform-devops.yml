@@ -39,13 +39,13 @@ permissions:
   contents: read
 
 jobs:
-  Rotate-HCP-Token:
-    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
-    secrets:
-      personal_access_token: ${{ secrets.PAT_RENEW_SECRET_KEY }}
-      HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
-      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-      PAT_RENEW_SECRET_KEY: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+#  Rotate-HCP-Token:
+#    uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-rotate-terraformHCP-token.yml@Personal
+#    secrets:
+#      personal_access_token: ${{ secrets.PAT_RENEW_SECRET_KEY }}
+#      HCP_ORGANIZATION: ${{ secrets.HCP_ORGANIZATION }}
+#      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
+#      PAT_RENEW_SECRET_KEY: ${{ secrets.PAT_RENEW_SECRET_KEY }}
 
   #Check-spelling:
   #uses: RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/.github/workflows/AA-check-spelling.yml@Personal
@@ -53,7 +53,6 @@ jobs:
   scan-terraform-config:
     runs-on: ubuntu-latest
     name: Scan Terraform with Checov
-    needs: [Rotate-HCP-Token]
     steps:
       - name: Checkout repo
         uses: actions/checkout@master
@@ -79,9 +78,13 @@ jobs:
     name: Deploy to Azure with Terraform
     runs-on: ubuntu-latest
     environment: ${{ github.ref == 'refs/heads/main' && 'production' }}
-    needs: [Rotate-HCP-Token, scan-terraform-config]
-    env:
-      TF_TOKEN_app_terraform_io: ${{ needs.Rotate-HCP-Token.outputs.new-token }}
+    needs: [scan-terraform-config]
+    #env:
+      #TF_TOKEN_app_terraform_io: $#{{ needs.Rotate-HCP-Token.outputs.new-token }}
+
+    # TENGO QUE PONER EL SECRETO EN TODOS LOS STEPS QUE FALLEN Y PROBAR QUE SE ARREGLE SIN USAR ENV
+    #secrets: 
+      #TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
 
     defaults:
       run:
