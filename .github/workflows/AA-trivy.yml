@@ -20,8 +20,8 @@ jobs:
 
       - name: Manual Trivy Setup
         uses: aquasecurity/setup-trivy@v0.2.2
-        with:
-          cache: true
+        #with:
+          #cache: true
 
       #- name: Build an image from Dockerfile
        # run: docker build -t docker.io/my-organization/my-app:$#{{ github.sha }} .
@@ -35,6 +35,9 @@ jobs:
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
           skip-setup-trivy: true
+      
+      - name: Check if SARIF file exists
+        run: cat trivy-results.sarif || echo "File not found"
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@main
