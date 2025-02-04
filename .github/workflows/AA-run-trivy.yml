@@ -2,6 +2,7 @@ name: Trivy
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,18 +16,26 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@master
 
-      - name: Run Trivy vulnerability scanner in IaC mode
+      - name: Manual Trivy Setup
+        uses: aquasecurity/setup-trivy@latest
+        with:
+          cache: true
+          version: v0.57.1
+
+      #- name: Build an image from Dockerfile
+       # run: docker build -t docker.io/my-organization/my-app:$#{{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: "config"
-          hide-progress: false
-          format: "sarif"
-          output: "trivy-results.sarif"
-          exit-code: "0"
+          scan-type: 'fs'
           ignore-unfixed: true
-          severity: "CRITICAL,HIGH"
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          skip-setup-trivy: true
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@main
+        uses: github/codeql-action/upload-sarif@latest
         with:
           sarif_file: "trivy-results.sarif"
