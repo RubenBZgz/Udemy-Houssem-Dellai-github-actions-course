@@ -1,3 +1,69 @@
+# DevOps-Proyect
+
+Simple overview of use/purpose. CI/CD proyect using Terraform and GitHub actions.
+
+
+## Description
+
+An in-depth paragraph about your project and overview of use.
+This DevOps Proyect is based in the Linkedin Learning Course of DevOps Foundations: Your First Proyect, with the objective of create a functional website development environment in azure. Technologies used:
+* Website example.
+
+
+## Table of Contents
+* [Prerequisites](#prerequisites)
+  * [Initial Setup](#initial-setup)
+  * [GitHub Actions secret variables](#github-secrets)
+* [Usage](#usage)
+  * [Scan CI Pipeline](#scan-ci-pipeline)
+* [Customizing](#customizing)
+  * [inputs](#inputs)
+  * [Environment variables](#environment-variables)
+  * [Trivy config file](#trivy-config-file)
+
+
+### Prerequisites
+Mandatory: 
+* Azure subscription. 
+* Terraform. Needed in your local machine to make changes correctly.
+* GitHub secrets. 
+* Personal Access Token. 
+
+Optional:
+* Backend provider. Azure or Teraform Cloud are supported.
+
+
+### Initial Setup
+1. Create your Azure account. https://azure.microsoft.com/es-es/get-started/azure-portal/
+2. Create your Service Principal.
+```bash
+## Create a Service Principal with contributor role for Terraform
+az ad sp create-for-rbac -n "Rubenbzgz-github-actions" --role Contributor --scope /subscriptions/$SUBSCRIPTION_ID --sdk-auth
+## Create Github Actions secrets and save output values of the Service Principal: secrets.AZURE_CLIENT_ID, secrets.AZURE_CLIENT_SECRET, secrets.AZURE_SUBSCRIPTION_ID, secrets.AZURE_TENANT_ID 
+---------
+output:
+---------
+{
+  "clientId": "xxxxxxxx-xxx",
+  "clientSecret": "xxxxxxxxx",
+  "subscriptionId": "xxxxxxxx-xxx",
+  "tenantId": "xxxxxxxx-xxx",
+  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+  "resourceManagerEndpointUrl": "https://management.azure.com/",
+  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+  "galleryEndpointUrl": "https://gallery.azure.com/",
+  "managementEndpointUrl": "https://management.core.windows.net/"
+}
+```
+
+3. Install Terraform. https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli#install-cli
+
+4. Personal Access Token. Profile -> Settings -> Developer settings -> Personal access token -> Fine-grained tokens -> Generate new token.
+![PAT Permissions](/Readme-images/PAT%20permissions.PNG)
+
+
+#### GitHub Secrets 
 Secrets:
 BACKEND_ORGANIZATION = Organization name of your HCP Terraform organization
 TF_API_TOKEN = API token to login inside my HCP Terraform workspace teams and lauch terraform init, apply...
@@ -90,3 +156,19 @@ Samples for Github Actions DevOps pipelines and workflows.
 [![050-docker-build-workflow](https://github.com/HoussemDellai/github-actions-course/actions/workflows/050-docker-build-workflow.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/050-docker-build-workflow.yml)
 
 [![052-docker-ghcr-workflow](https://github.com/HoussemDellai/github-actions-course/actions/workflows/052-docker-ghcr-workflow.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/052-docker-ghcr-workflow.yml)
+
+
+
+## Version History
+
+* 0.1
+  * Initial Release
+
+
+## Disclaimer and Warning
+
+This project is provided “as is”, without warranties of any kind, either expressed or implied. The author doesn't assume any responsability and shall not be responsible for any direct, indirect, incidental, special, exemplary or consequential damages (including, but not limited to, procurement of goods or services; loss of use, data or profits; or business interruption) caused by the use or inability to use the project, even if advised of the possibility of such damages.
+
+The user assumes full responsibility for the use and implementation of this project. It is strongly recommended that the code and configurations be reviewed and fully understood before use in production environments.
+
+In case of questions or concerns, users are encouraged to contact the project author before proceeding with implementation.
