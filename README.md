@@ -77,7 +77,7 @@ Who this course is for:
 
 Samples for Github Actions DevOps pipelines and workflows.
 
-[![010-blank-workflow](https://github.com/HoussemDellai/github-actions-course/actions/workflows/010-blank-workflow.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/010-blank-workflow.yml)
+[![Terraform deployment](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/terraform-devops.yml/badge.svg)](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/terraform-devops.yml)
 
 [![020-manual-workflow](https://github.com/HoussemDellai/github-actions-course/actions/workflows/020-manual-input-workflow.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/020-manual-input-workflow.yml)
 

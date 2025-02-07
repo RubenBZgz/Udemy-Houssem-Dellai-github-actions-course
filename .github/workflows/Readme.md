@@ -12,6 +12,14 @@ Prerequisites:
     - AZURE_CREDENTIALS. az ad sp create-for-rbac -n "spn-aca-github" --role Contributor --scope /subscriptions/$SUBSCRIPTION_ID --sdk-auth
 
 # terraform-devops.yml
+This is the main workflow in order to deploying IAC in azure via terraform using CI/CD.
+There is room for improvement as I have not yet implemented artifacts feature.
+
+Future features:
+- AWS support.
+- Artifact deployment and analysis.
+- Implementation of Trivy or Tfsec. Security must be implemented before using this in production.
+
 Prerequites:
 - Azure Account
 - Create a Service Principal
