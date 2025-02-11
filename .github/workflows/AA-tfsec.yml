@@ -35,6 +35,13 @@ jobs:
               out: tfsec.sarif
 
 
+          - name: List files in repository
+            run: ls -alR .
+
+          - name: Find all files
+            run: find . -type f
+
+            
           - name: Upload SARIF file
             uses: github/codeql-action/upload-sarif@v3
             with:
