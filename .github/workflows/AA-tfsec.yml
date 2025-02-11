@@ -16,6 +16,10 @@ jobs:
             contents: read
             pull-requests: write
 
+        strategy:
+          matrix:
+            folder: [07_Azure_Container_Apps] # List of project folders
+
         steps:
           - name: Clone repo
             uses: actions/checkout@master
@@ -25,7 +29,7 @@ jobs:
             with:
               version: latest
               format: sarif
-              working_directory: .
+              working_directory: ./Terraform/${{ matrix.folder }}
               soft_fail: true
             
           # - name: tfsec
