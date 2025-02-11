@@ -1,6 +1,8 @@
 # DevOps-Proyect
 
-Simple overview of use/purpose. CI/CD proyect using Terraform and GitHub actions.
+This is a CI/CD proyect using Terraform and GitHub actions. 
+The objective of this proyect is to provide a professional IAC deployment using best practices
+and ensuring the security.
 
 
 ## Description
@@ -64,10 +66,51 @@ output:
 
 
 #### GitHub Secrets 
-Secrets:
-BACKEND_ORGANIZATION = Organization name of your HCP Terraform organization
-TF_API_TOKEN = API token to login inside my HCP Terraform workspace teams and lauch terraform init, apply...
-GITHUB_PAT = Fine-grained personal access token to update secrets of the repository
+Mandatory:
+<!-- Comprobar OICD para quitarlo -->AZURE_CLIENT_ID
+<!-- Comprobar OICD para quitarlo -->AZURE_CLIENT_SECRET
+AZURE_CREDENTIALS
+AZURE_SUBSCRIPTION_ID
+<!-- Comprobar OICD para quitarlo -->AZURE_TENANT_ID
+
+
+Optional:
+* If you have an Azure Backend:
+  - BACKEND_CONTAINER_NAME
+  - BACKEND_KEY
+  - BACKEND_RESOURCE_GROUP_NAME
+  - BACKEND_STORAGE_ACCOUNT_NAME
+```
+terraform {
+  # Azure Backend
+  backend "azurerm" {
+    resource_group_name   = "xxxx"
+    storage_account_name  = "xxxx"
+    container_name        = "xxxx"
+    key                   = "xxxx"
+  } 
+}
+```
+
+* If you have Terraform Cloud backend:
+  - HCP_ORGANIZATION. Organization name
+  - HCP_WORKSPACE. Workspace name
+  - PAT_RENEW_SECRET_KEY. PAT Token of GitHub
+  - TF_API_TOKEN. Owner team token of Terraform Cloud
+```
+terraform {
+  # Terraform Cloud Backend
+  cloud {
+    organization = "Your HCP Terraform Organization"
+
+    workspaces {
+      name = "Your HCP Terraform Workspace"
+    }
+  }
+}
+```
+
+
 https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
 
@@ -82,15 +125,6 @@ https://developer.hashicorp.com/terraform/language/backend/remote
 4. Create terraform backend like this
 ```
 terraform {
-
-  /*  NORMAL AZURE BACKEND HARDCODED
-  backend "azurerm" {
-    resource_group_name   = ""
-    storage_account_name  = ""
-    container_name        = ""
-    key                   = ""
-  } */
-
   # Terraform Cloud Backend
   cloud {
     organization = "Your HCP Terraform Organization"
@@ -101,12 +135,6 @@ terraform {
   }
 }
 ```
-
-
-In my case, I'm going to use a variable set to use this credentials across multiple proyects. You can create it in your workspace settings.
-
-If you don't want to use this, you can use other alternatives like variables or backend.tf
-
 
 # Github Actions course
 
@@ -145,18 +173,11 @@ Samples for Github Actions DevOps pipelines and workflows.
 
 [![Terraform deployment](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/terraform-devops.yml/badge.svg)](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/terraform-devops.yml)
 
-[![020-manual-workflow](https://github.com/HoussemDellai/github-actions-course/actions/workflows/020-manual-input-workflow.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/020-manual-input-workflow.yml)
+[![Tfsec security](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/AA-tfsec.yml/badge.svg)](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/AA-tfsec.yml)
 
-[![030-dotnet-workflow](https://github.com/HoussemDellai/github-actions-course/actions/workflows/030-dotnet-workflow.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/030-dotnet-workflow.yml)
+[![Trivy security](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/AA-trivy.yml/badge.svg)](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/AA-trivy.yml)
 
-[![031-build-deploy-webapp-to-azure](https://github.com/HoussemDellai/github-actions-course/actions/workflows/031-build-deploy-webapp-to-azure.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/031-build-deploy-webapp-to-azure.yml)
-
-[![040-github-linter](https://github.com/HoussemDellai/github-actions-course/actions/workflows/040-github-linter.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/040-github-linter.yml)
-
-[![050-docker-build-workflow](https://github.com/HoussemDellai/github-actions-course/actions/workflows/050-docker-build-workflow.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/050-docker-build-workflow.yml)
-
-[![052-docker-ghcr-workflow](https://github.com/HoussemDellai/github-actions-course/actions/workflows/052-docker-ghcr-workflow.yml/badge.svg)](https://github.com/HoussemDellai/github-actions-course/actions/workflows/052-docker-ghcr-workflow.yml)
-
+[![Rotate HCP Token](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/AA-rotate-terraformHCP-token.yml/badge.svg)](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/AA-rotate-terraformHCP-token.yml)
 
 
 ## Version History
