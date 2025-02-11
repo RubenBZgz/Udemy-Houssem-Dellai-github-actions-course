@@ -24,16 +24,20 @@ jobs:
           - name: Clone repo
             uses: actions/checkout@master
 
+
+          # - name: Run tfsec
+          #   run: |
+          #     tfsec --format sarif --out tfsec.sarif --soft-fail true 
+
           - name: tfsec
-            uses: aquasecurity/tfsec-action@v1.0.0
+            uses: tfsec/tfsec-sarif-action@main
             with:
-              version: latest
+              #version: latest
               format: sarif
-              working_directory: ./Terraform/${{ matrix.folder }}
-              soft_fail: true #false to break the job
+              #working_directory: ./Terraform/${{ matrix.folder }}
+              #soft_fail: true #false to break the job
               sarif_file: tfsec.sarif
               #out: tfsec.sarif
-
 
           - name: List files in repository
             run: ls -alR .
