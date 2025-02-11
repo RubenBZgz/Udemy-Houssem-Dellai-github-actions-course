@@ -24,7 +24,7 @@ jobs:
             uses: aquasecurity/tfsec-action@v1.0.0
             with:
               version: latest
-              format: sarif,json
+              format: sarif
               working_directory: .
               soft_fail: true
             
