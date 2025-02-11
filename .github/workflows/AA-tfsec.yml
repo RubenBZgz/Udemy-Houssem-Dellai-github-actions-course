@@ -24,20 +24,16 @@ jobs:
           - name: Clone repo
             uses: actions/checkout@master
 
-
-          # - name: Run tfsec
-          #   run: |
-          #     tfsec --format sarif --out tfsec.sarif --soft-fail true 
-
-          - name: tfsec
-            uses: tfsec/tfsec-sarif-action@v1.0.3
+          - name: Choco help
+            uses: crazy-max/ghaction-chocolatey@v3
             with:
-              #version: latest
-              format: sarif
-              #working_directory: ./Terraform/${{ matrix.folder }}
-              #soft_fail: true #false to break the job
-              sarif_file: tfsec.sarif
-              #out: tfsec.sarif
+              args: install tfsec
+
+          - name: Run tfsec
+            run: |
+              tfsec --format sarif --out tfsec.sarif --soft-fail true 
+
+
 
           - name: List files in repository
             run: ls -alR .
