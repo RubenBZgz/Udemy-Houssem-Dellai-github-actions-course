@@ -32,8 +32,8 @@ jobs:
               working_directory: ./Terraform/${{ matrix.folder }}
               soft_fail: true
             
-          # - name: tfsec
-          #   uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
-          #   with:
-          #       github_token: ${{ github.token }}
-          #       tfsec_formats: sarif,json
+          - name: Upload SARIF file
+            uses: github/codeql-action/upload-sarif@v3
+            with:
+              # Path to SARIF file relative to the root of the repository
+              sarif_file: tfsec.sarif
