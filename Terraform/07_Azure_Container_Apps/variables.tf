@@ -4,17 +4,6 @@ variable "subscription_id" {
   default     = ""
 }
 
-variable "HCP_ORGANIZATION" {
-  type        = string
-  description = "HCP Terraform organization"
-  default     = ""
-}
-
-variable "HCP_WORKSPACE" {
-  type        = string
-  description = "HCP Terraform workspace"
-  default     = ""
-}
 
 # RESOURCE VARIABLES
 variable "location" {

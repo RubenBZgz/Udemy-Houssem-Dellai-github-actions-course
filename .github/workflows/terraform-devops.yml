@@ -1,6 +1,8 @@
 name: "Create Infra with Terraform"
 
 on:
+  push:
+    branches: main
   pull_request:
     branches: main # [ main ]
 
@@ -87,11 +89,7 @@ jobs:
         uses: Azure/login@v2
         if: ${{ (inputs.AZURE_LOGIN == 'SERVICE_PRINCIPAL') || ( (inputs.AZURE_LOGIN == 'None' || inputs.AZURE_LOGIN == '') && env.DEFAULT_AZURE_LOGIN == 'SERVICE_PRINCIPAL') }}
         with:
-          # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
-          # az role assignment create --assignee <service-principal-id> --role Contributor --scope /subscriptions/<subscription-id>
-          # Credentials: ${#{ secrets.AZURE_CREDENTIALS }}. You can also use the following credentials:
           auth-type: SERVICE_PRINCIPAL
-          #creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
           creds: ${{ secrets.AZURE_CREDENTIALS }}  # Uses the AZURE_CREDENTIALS secret for login
           enable-AzPSSession: true  #Needed in order to use the credentials in other steps
 
@@ -217,7 +215,7 @@ jobs:
 
       # Install the latest version of Terraform CLI
       - name: Install Terraform
-        uses: hashicorp/setup-terraform@v3.1.0
+        uses: hashicorp/setup-terraform@v3.1.2
 
       - name: Terraform Init
         run: |
@@ -250,12 +248,8 @@ jobs:
 
       - name: Terraform Plan / Apply
         env:
-          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         run: |
-          #az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
           cd ${{ matrix.project }}
           echo "Directory updated: "
           pwd

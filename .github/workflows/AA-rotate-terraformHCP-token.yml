@@ -2,7 +2,7 @@ name: AA-rotate-terraformHCP-token
 
 on:
   schedule:
-    - cron: "0 * * * *" # Se ejecuta al inicio de cada hora
+    - cron: "0 */12 * * *" # Se ejecuta al inicio de cada hora
   
   # Allow you to use this workflow in another WF
   workflow_call:
@@ -87,7 +87,7 @@ jobs:
 
 
           # Renew Team API Token with an expiration of 1 hour
-          expiration_date=$(date -u -d '+2 hour' +"%Y-%m-%dT%H:%M:%SZ")
+          expiration_date=$(date -u -d '+13 hour' +"%Y-%m-%dT%H:%M:%SZ")
           cat <<EOF > payload.json
           {
             "data": {
