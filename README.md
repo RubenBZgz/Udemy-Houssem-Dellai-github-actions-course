@@ -4,12 +4,7 @@ This is a CI/CD proyect using Terraform and GitHub actions.
 The objective of this proyect is to provide a professional IAC deployment using best practices
 and ensuring the security.
 
-
-## Description
-
-An in-depth paragraph about your project and overview of use.
-This DevOps Proyect is based in the Linkedin Learning Course of DevOps Foundations: Your First Proyect, with the objective of create a functional website development environment in azure. Technologies used:
-* Website example.
+DevOps became very imprtant for organiztions willing to automate and modernaze their workloads. Thanks to its capabilities, it is never been easier create a pipeline that can do all the required staps to build 'almost' any kind of application and deploy 'almost' to any environment. All of this with a click of a button.
 
 
 ## Table of Contents
@@ -17,31 +12,38 @@ This DevOps Proyect is based in the Linkedin Learning Course of DevOps Foundatio
   * [Initial Setup](#initial-setup)
   * [GitHub Actions secret variables](#github-secrets)
 * [Usage](#usage)
-  * [Scan CI Pipeline](#scan-ci-pipeline)
+* [Version History](#version-history)
+* [Future Features](#future-features)
+* [Disclaimer and Warning](#disclaimer-and-warning)
+<!-- 
 * [Customizing](#customizing)
   * [inputs](#inputs)
   * [Environment variables](#environment-variables)
   * [Trivy config file](#trivy-config-file)
-
+-->
 
 ### Prerequisites
 Mandatory: 
 * Azure subscription. 
 * Terraform. Needed in your local machine to make changes correctly.
 * GitHub secrets. 
-* Personal Access Token. 
 
 Optional:
 * Backend provider. Azure or Teraform Cloud are supported.
+* Personal Access Token. 
 
 
 ### Initial Setup
+0. Install Azure CLI or update your azure cli version running az upgrade. https://learn.microsoft.com/en-us/cli/azure/install-azure-cli 
 1. Create your Azure account. https://azure.microsoft.com/es-es/get-started/azure-portal/
-2. Create your Service Principal.
-```bash
-## Create a Service Principal with contributor role for Terraform
+2. Execute the following commands in powershell.
+```powershell
+az login
+az account show # The field named id is the Subscription ID.
+$SUBSCRIPTION_ID = "xxxx"
+# Create a Service Principal with contributor role for Terraform
 az ad sp create-for-rbac -n "Rubenbzgz-github-actions" --role Contributor --scope /subscriptions/$SUBSCRIPTION_ID --sdk-auth
-## Create Github Actions secrets and save output values of the Service Principal: secrets.AZURE_CLIENT_ID, secrets.AZURE_CLIENT_SECRET, secrets.AZURE_SUBSCRIPTION_ID, secrets.AZURE_TENANT_ID 
+# Create Github Actions secrets and save output values of the Service Principal: secrets.AZURE_CLIENT_ID, secrets.AZURE_CLIENT_SECRET, secrets.AZURE_SUBSCRIPTION_ID, secrets.AZURE_TENANT_ID 
 ---------
 output:
 ---------
@@ -59,27 +61,25 @@ output:
 }
 ```
 
-3. Install Terraform. https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli#install-cli
+3. Save the results of the previous command in GitHub secret variable AZURE_CREDENTIALS like the example below:
+```
+{
+  "clientId": "xxxxxxxx-xxx",
+  "clientSecret": "xxxxxxxxx",
+  "subscriptionId": "xxxxxxxx-xxx",
+  "tenantId": "xxxxxxxx-xxx"
+}
+```
 
-4. Personal Access Token. Profile -> Settings -> Developer settings -> Personal access token -> Fine-grained tokens -> Generate new token.
-![PAT Permissions](/Readme-images/PAT%20permissions.PNG)
 
-
-#### GitHub Secrets 
-Mandatory:
-<!-- Comprobar OICD para quitarlo -->AZURE_CLIENT_ID
-<!-- Comprobar OICD para quitarlo -->AZURE_CLIENT_SECRET
-AZURE_CREDENTIALS
-AZURE_SUBSCRIPTION_ID
-<!-- Comprobar OICD para quitarlo -->AZURE_TENANT_ID
 
 
 Optional:
-* If you have an Azure Backend:
-  - BACKEND_CONTAINER_NAME
-  - BACKEND_KEY
-  - BACKEND_RESOURCE_GROUP_NAME
-  - BACKEND_STORAGE_ACCOUNT_NAME
+If you want to execute terraform on your local machine, follow the instructions:
+1. Install Terraform. https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli#install-cli
+
+Available backends.tf configurations:
+- Azure Storage Account backend:
 ```
 terraform {
   # Azure Backend
@@ -91,6 +91,51 @@ terraform {
   } 
 }
 ```
+
+- Terraform Cloud backend:
+https://developer.hashicorp.com/terraform/language/backend/remote
+1. Terraform login
+<!-- 
+2. cd tfc-getting-started 
+3. scripts/setup.sh -->
+2. Create terraform backend like this
+```
+terraform {
+  # Terraform Cloud Backend
+  cloud {
+    organization = "Your HCP Terraform Organization"
+
+    workspaces {
+      name = "Your HCP Terraform Workspace"
+    }
+  }
+}
+```
+
+If you have Terraform Cloud, you will to create your PAT.
+* Profile -> Settings -> Developer settings -> Personal access token -> Fine-grained tokens -> Generate new token.
+![PAT Permissions](/Readme-images/PAT%20permissions.PNG)
+
+
+#### GitHub Secrets 
+Mandatory:
+<!-- Comprobar OICD para quitarlo -->
+AZURE_CLIENT_ID
+<!-- Comprobar OICD para quitarlo -->
+AZURE_CLIENT_SECRET
+AZURE_CREDENTIALS
+AZURE_SUBSCRIPTION_ID
+<!-- Comprobar OICD para quitarlo -->
+AZURE_TENANT_ID
+
+
+Optional:
+* If you have an Azure Backend:
+  - BACKEND_CONTAINER_NAME
+  - BACKEND_KEY
+  - BACKEND_RESOURCE_GROUP_NAME
+  - BACKEND_STORAGE_ACCOUNT_NAME
+
 
 * If you have Terraform Cloud backend:
   - HCP_ORGANIZATION. Organization name
@@ -111,65 +156,7 @@ terraform {
 ```
 
 
-https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
-
-Requirements:
-az -upgrade
-
-I have used HCP Terraform (Terraform Cloud service) in order to have secure access to my secret keys of my Azure Backend. 
-https://developer.hashicorp.com/terraform/language/backend/remote
-1. Terraform login
-2. cd tfc-getting-started
-3. scripts/setup.sh
-4. Create terraform backend like this
-```
-terraform {
-  # Terraform Cloud Backend
-  cloud {
-    organization = "Your HCP Terraform Organization"
-
-    workspaces {
-      name = "Your HCP Terraform Workspace"
-    }
-  }
-}
-```
-
-# Github Actions course
-
-DevOps became very imprtant for organiztions willing to automate and modernaze their workloads. Thanks to its capabilities, it is never been easier create a pipelin that can do all the required staps to build 'almost' any kind of application and deploy 'almost' to any environment. All of this with a click of a button.
-
-Not only that, using DevOps features makes it possible to secure the pipelines when managing secrets or when connecting to the target production environment. That become today what is known as DevSecOps.
-
-Many known tools are available to inplement DevOps like Jenkins, Gitlab CI, Azure DevOps Pipelines and many more. Github Actions is one of these tools. It did become popular from the first day it was launched back in 2018. That success was due to the popularity of Github as a platform to host the source code used by more than 50 million users. It was very natural to use the same platform to build and deploy that code into production.
-
-This course will walk you through the creation of CI/CD DevOps pipelines to take your code, build it, scan it, test it then deploy it into Dev, Test and Prod environments whether that is in premise or on the cloud.
-
-Using multiple demonstrations, we will show the powerful features of Github Actions.
-
-What you’ll learn:
-- The fundamentals for writing CI/CD pipelines with Github Actions
-- Best practices for editing Github workflows
-- Triggering a workflow on a Pull Request, Tag, Push or on a schedule
-- Creating DevOps pipelines for Web Apps, Container apps and Databases
-- Deploying apps and infra into Azure Cloud
-- Using Terraform and Bicep (Infra as Code) with Github Actions
-- Creating custom runner to run the pipelines
-- Implement DevSecOps principles
-- Creating pipelines for aspnet and dockerized apps
-
-Are there any course requirements or prerequisites?
-- No DevOps experience required, this course will take you from the ground up to the expert level
-- Basic knowledge of Git and Github
-
-Who this course is for:
-- All beginners (developers, ops and devops) who wants to learn Github Actions
-- Developers who already use Git and Github and are looking to master another cool feature of Github
-- DevOps beginners looking for step by step guide to create their first successful CI/CD pipelines
-- Ops experts looking for to use Github to automate the deployment of their infrastructure
-
-Samples for Github Actions DevOps pipelines and workflows.
 
 [![Terraform deployment](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/terraform-devops.yml/badge.svg)](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/terraform-devops.yml)
 
@@ -180,10 +167,37 @@ Samples for Github Actions DevOps pipelines and workflows.
 [![Rotate HCP Token](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/AA-rotate-terraformHCP-token.yml/badge.svg)](https://github.com/RubenBZgz/Udemy-Houssem-Dellai-github-actions-course/actions/workflows/AA-rotate-terraformHCP-token.yml)
 
 
+## Usage
+Before reading this section, you should have readed the prerequisites section. Ensure that you have all the necessary configuration. If not, go back to the previous section.
+
+The first step you have to do is to disable AA-rotate-terraformCHP-token.yml if you don't have HCP as your backend. 
+It's an scheduled workflow, so it will give error as result each time is executed.
+
+Then, you have 2 different types of running the proyect:
+1. Making a push or pull request to the main branch. Whenever one of them is done, several GitHub actions will be executed automatically, deploying you IAC to your Azure Subscription.
+2. Executing manually GitHub actions workflow form the web browser. All of them have workflow_dispatch added.
+
+
+
 ## Version History
 
 * 0.1
   * Initial Release
+
+
+## Future Features
+* GitHub actions terraform-devops.yml workflow to login with OIDC. Is better than using the typical login with service principal.
+  https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust?pivots=identity-wif-apps-methods-azcli#important-considerations-and-restrictions
+* GitHub Actions workflow to deploy containers
+* Implementation of Trivy or/and Tfsec in the CI/CD
+* Link GitHub repository with Azure 
+* Check the best practices for editing Github workflows
+* Personal Access Token (PAT) improved security. https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
+* Artifact.
+
+Optional:
+* Creating custom runner to run the pipelines
+* Azure bicep
 
 
 ## Disclaimer and Warning
