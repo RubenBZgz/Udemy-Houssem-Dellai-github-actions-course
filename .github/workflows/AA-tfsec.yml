@@ -30,7 +30,7 @@ jobs:
           #     tfsec --format sarif --out tfsec.sarif --soft-fail true 
 
           - name: tfsec
-            uses: tfsec/tfsec-sarif-action@main
+            uses: tfsec/tfsec-sarif-action@v1.0.3
             with:
               #version: latest
               format: sarif
