@@ -31,8 +31,15 @@ jobs:
               format: sarif
               working_directory: ./Terraform/${{ matrix.folder }}
               soft_fail: true #false to break the job
+              sarif_file: tfsec.sarif
             
           - name: Upload TFsec scan results to GitHub Security tab
             uses: github/codeql-action/upload-sarif@main
             with:
               sarif_file: ./Terraform/${{ matrix.folder }}/tfsec.sarif
+
+          - name: Upload SARIF file
+            uses: github/codeql-action/upload-sarif@v3
+            with:
+              # Path to SARIF file relative to the root of the repository
+              sarif_file: tfsec.sarif
