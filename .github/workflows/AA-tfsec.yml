@@ -31,7 +31,7 @@ jobs:
               format: sarif
               working_directory: ./Terraform/${{ matrix.folder }}
               soft_fail: true #false to break the job
-              #sarif_file: tfsec.sarif
+              sarif_file: tfsec.sarif
               #out: tfsec.sarif
 
 
