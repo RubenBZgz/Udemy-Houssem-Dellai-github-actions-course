@@ -30,7 +30,7 @@ jobs:
 
      # Upload alerts file as a workflow artifact
     - name: Upload alerts file as a workflow artifact
-      uses: github/codeql-action/upload-artifact@main
+      uses: actions/upload-artifact@main
       with:
         name: alerts
         path: ${{steps.msdo.outputs.sarifFile }}
