@@ -1,4 +1,4 @@
-# DevOps-Proyect
+# Azure Terraform DevOps Pipelines
 
 This is a CI/CD proyect using Terraform and GitHub actions. 
 The objective of this proyect is to provide a professional IAC deployment using best practices
