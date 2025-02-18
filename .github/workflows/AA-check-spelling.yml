@@ -1,10 +1,7 @@
 name: AA-Check-GitHub-Actions-spelling
 on: # rebuild any PRs and main branch changes
-  #pull_request:
-  #push:
-  
-  # Allow you to use this workflow in another WF
-  workflow_call:
+  workflow_dispatch: # allow manual trigger
+  workflow_call: #Allow you to use this workflow in another WF
 
 jobs:
   spellcheck: # run the action

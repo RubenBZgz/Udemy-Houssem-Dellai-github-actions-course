@@ -1,11 +1,9 @@
 name: "Create Infra with Terraform"
 
 on:
-  push:
-    branches: main
   pull_request:
-    branches: main # [ main ]
-
+    branches: main 
+    
   workflow_dispatch:
     inputs:
       AZURE_LOGIN:
