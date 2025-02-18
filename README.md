@@ -1,5 +1,4 @@
 # Azure Terraform DevOps
-
 This is a CI/CD proyect using Terraform and GitHub actions. 
 The objective of this proyect is to provide a professional IAC deployment using best practices
 and ensuring the security.
@@ -194,3 +193,6 @@ Then, you have 2 different types of running the proyect:
 Optional:
 * Creating a custom runner to run the pipelines.
 * Azure Bicep.
+
+
+This repository has used [github actions course](https://github.com/HoussemDellai/github-actions-course) repository as reference from Houssem Dellai. 
