@@ -15,7 +15,7 @@
 # Backend files 
 backend.tf
 backend.tfvars
-05_Web_Sql_database/backend.tf
+terraform.tfvars
 *.tfvars
 
 

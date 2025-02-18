@@ -16,6 +16,7 @@ provider "azurerm" {
 
 #az login
 #az account show
+#az login --tenant "YOUR TENANT ID"
 #az account set --subscription <subscription_id>
 #terraform login
 #You are ready to use terraform in your local machine

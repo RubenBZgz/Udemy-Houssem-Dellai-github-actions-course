@@ -3,7 +3,7 @@ name: "Create Infra with Terraform"
 on:
   pull_request:
     branches: main 
-    
+
   workflow_dispatch:
     inputs:
       AZURE_LOGIN:
@@ -76,6 +76,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
 
     strategy:
+      max-parallel: 1  # Limits to one concurrent job. Avoid stafe file lock
       matrix:
         project: [07_Azure_Container_Apps, Azure_Resource_Group] # List of project folders
 
@@ -229,7 +230,7 @@ jobs:
           else
             cat backend.tf
           fi
-          terraform init -upgrade -input=false
+          terraform init -upgrade -input=false 
 
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format

@@ -122,7 +122,7 @@ jobs:
 
             # Send the new token value to Github Outputs
             echo "new-token=$token_id" >> $GITHUB_OUTPUT
-            #Use this for reference: ${{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
+            #Use this for reference: $#{{ steps.Rotate-Terraform-API-Token.outputs.new-token }}
             
           else
             echo "Failed to retrieve new token."
