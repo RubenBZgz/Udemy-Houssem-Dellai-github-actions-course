@@ -1,57 +1,32 @@
 name: Tfsec 
 
 on:
-  push:
-    branches: main
   pull_request: 
     branches: main
   workflow_dispatch:
 
-jobs:
+permissions:
+  security-events: write
+
+jobs:    
     tfsec:
-        name: tfsec PR commenter
-        runs-on: ubuntu-latest
+      name: TFsec 
+      runs-on: ubuntu-latest
 
-        permissions:
-            contents: read
-            pull-requests: write
+      steps:
+        - name: Clone repo
+          uses: actions/checkout@master
 
-        strategy:
-          matrix:
-            folder: [07_Azure_Container_Apps] # List of project folders
-
-        steps:
-          - name: Clone repo
-            uses: actions/checkout@master
-
-          - name: Choco help
-            uses: crazy-max/ghaction-chocolatey@v3
-            with:
-              args: install tfsec
-
-          - name: Run tfsec
-            run: |
-              tfsec --format sarif --out tfsec.sarif --soft-fail true 
-
-
-
-          - name: List files in repository
-            run: ls -alR .
-
-          - name: Find all files
-            run: find . -type f
-
-
-          - name: Upload SARIF file
-            uses: github/codeql-action/upload-sarif@v3
-            with:
-              # Path to SARIF file relative to the root of the repository
-              sarif_file: tfsec.sarif
-              
-              
-          # - name: Upload TFsec scan results to GitHub Security tab
-          #   uses: github/codeql-action/upload-sarif@main
-          #   with:
-          #     sarif_file: ./Terraform/${{ matrix.folder }}/tfsec.sarif
-
-          
+        - name: tfsec
+          uses: aquasecurity/tfsec-action@v1.0.0
+          with:
+            soft_fail: true
+            working_directory: .
+            format: sarif
+            additional_args: "--out tfsec.sarif"
+            
+        - name: Upload SARIF file
+          uses: github/codeql-action/upload-sarif@v3
+          with:
+            # Path to SARIF file relative to the root of the repository
+            sarif_file: tfsec.sarif
