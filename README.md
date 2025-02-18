@@ -13,8 +13,6 @@ DevOps became very imprtant for organiztions willing to automate and modernaze t
   * [GitHub Actions secret variables](#github-secrets)
 * [Usage](#usage)
 * [Version History](#version-history)
-* [Future Features](#future-features)
-* [Disclaimer and Warning](#disclaimer-and-warning)
 <!-- 
 * [Customizing](#customizing)
   * [inputs](#inputs)
@@ -114,7 +112,7 @@ terraform {
 
 If you have Terraform Cloud, you will to create your PAT.
 * Profile -> Settings -> Developer settings -> Personal access token -> Fine-grained tokens -> Generate new token.
-![PAT Permissions](/Readme-images/PAT%20permissions.PNG)
+![PAT Permissions](/Readmes/Images/PAT%20permissions.PNG)
 
 
 #### GitHub Secrets 
@@ -183,27 +181,3 @@ Then, you have 2 different types of running the proyect:
 
 * 0.1
   * Initial Release
-
-
-## Future Features
-* GitHub actions terraform-devops.yml workflow to login with OIDC. Is better than using the typical login with service principal.
-  https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust?pivots=identity-wif-apps-methods-azcli#important-considerations-and-restrictions
-* GitHub Actions workflow to deploy containers
-* Implementation of Trivy or/and Tfsec in the CI/CD
-* Link GitHub repository with Azure 
-* Check the best practices for editing Github workflows
-* Personal Access Token (PAT) improved security. https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
-* Artifact.
-
-Optional:
-* Creating custom runner to run the pipelines
-* Azure bicep
-
-
-## Disclaimer and Warning
-
-This project is provided “as is”, without warranties of any kind, either expressed or implied. The author doesn't assume any responsability and shall not be responsible for any direct, indirect, incidental, special, exemplary or consequential damages (including, but not limited to, procurement of goods or services; loss of use, data or profits; or business interruption) caused by the use or inability to use the project, even if advised of the possibility of such damages.
-
-The user assumes full responsibility for the use and implementation of this project. It is strongly recommended that the code and configurations be reviewed and fully understood before use in production environments.
-
-In case of questions or concerns, users are encouraged to contact the project author before proceeding with implementation.
