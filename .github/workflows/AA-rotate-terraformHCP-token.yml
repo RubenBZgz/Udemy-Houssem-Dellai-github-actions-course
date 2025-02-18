@@ -3,7 +3,8 @@ name: AA-rotate-terraformHCP-token
 on:
   schedule:
     - cron: "0 */12 * * *" # Se ejecuta al inicio de cada hora
-  
+  workflow_dispatch:
+
   # Allow you to use this workflow in another WF
   workflow_call:
     secrets:
