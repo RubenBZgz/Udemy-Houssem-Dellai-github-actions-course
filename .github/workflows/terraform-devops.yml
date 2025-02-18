@@ -79,7 +79,7 @@ jobs:
 
     strategy:
       matrix:
-        project: [07_Azure_Container_Apps] # List of project folders
+        project: [07_Azure_Container_Apps, Azure_Resource_Group] # List of project folders
 
     steps:
       - name: Checkout
