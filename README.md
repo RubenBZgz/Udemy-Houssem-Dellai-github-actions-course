@@ -94,7 +94,7 @@ terraform {
 2. cd tfc-getting-started 
 3. scripts/setup.sh -->
 2. Create terraform backend like this
-```
+```hcl
 terraform {
   # Terraform Cloud Backend
   cloud {
