@@ -93,9 +93,16 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}  # Uses the AZURE_CREDENTIALS secret for login
           enable-AzPSSession: true  #Needed in order to use the credentials in other steps
 
+          
         # Login with OIDC. https://github.com/Azure/login?tab=readme-ov-file#login-with-openid-connect-oidc-recommended
+<<<<<<< Updated upstream
       - uses: azure/login@v2
         if: ${{ (inputs.AZURE_LOGIN == 'OIDC') || ( (inputs.AZURE_LOGIN == 'None' || inputs.AZURE_LOGIN == '') && env.DEFAULT_AZURE_LOGIN == 'OIDC') }}
+=======
+      - name: Login to Azure with OIDC
+        uses: azure/login@v2
+        if: ${{ (inputs.AZURE_LOGIN == 'OIDC') || (inputs.AZURE_LOGIN == 'None' && env.DEFAULT_AZURE_LOGIN == 'OIDC') }}
+>>>>>>> Stashed changes
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -109,6 +116,20 @@ jobs:
           inlineScript: |
             az account show
 
+<<<<<<< Updated upstream
+=======
+      - name: Debug Token
+        run: |
+          echo "::add-mask::${TF_TOKEN_app_terraform_io}"
+          echo "TF_TOKEN_app_terraform_io=${TF_TOKEN_app_terraform_io}"
+          if [ -z "${TF_TOKEN_app_terraform_io}" ]; then
+            echo "Error: TF_TOKEN_app_terraform_io is empty. Canceling execution."
+            exit 1
+          else
+            echo "TF_TOKEN_app_terraform_io is initialized."
+          fi
+
+>>>>>>> Stashed changes
       # AzureRM Backend Configuration
       - name: AzureRM Terraform Backend
         uses: Azure/cli@v2
