@@ -1,0 +1,37 @@
+#id-token: write
+name: Microsoft Defender for DevOps
+
+on:
+  push:
+    branches: main
+  pull_request: 
+    branches: main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Microsoft Defender for DevOps
+    # ubuntu-latest and macos-latest supporting coming soon
+    runs-on: windows-latest
+
+    steps:
+    # Checkout your code repository to scan
+    - uses: actions/checkout@v4
+
+    # Run analyzers
+    - name: security-devops-action
+      uses: microsoft/security-devops-action@v1.12.0
+      id: msdo
+    
+    # Upload alerts to the Security tab
+    - name: Upload alerts to Security tab
+      uses: github/codeql-action/upload-sarif@main
+      with:
+        sarif_file: ${{steps.msdo.outputs.sarifFile }}
+
+       #Upload alerts file as a workflow artifact
+    - name: Upload alerts file as a workflow artifact
+      uses: actions/upload-artifact@main
+      with:
+        name: alerts
+        path: ${{steps.msdo.outputs.sarifFile }}
