@@ -11,6 +11,12 @@ variable "location" {
   default     = "West Europe"
 }
 
+variable "min_tls_version" {
+  description = "The minimum TLS version for the storage account"
+  type        = string
+  default     = "TLS1_2"
+}
+
 
 # RESOURCE VARIABLES
 variable "resource_group_name" {
@@ -18,3 +24,4 @@ variable "resource_group_name" {
   description = "resource_group_name"
   default     = "rg-containerapps-github-actions-2"
 }
+

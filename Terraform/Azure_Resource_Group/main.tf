@@ -16,4 +16,13 @@ resource "azurerm_storage_account" "insecure" {
   tags = {
     environment = "dev"
   }
+
+  public_network_access_enabled = false
+  min_tls_version = var.min_tls_version
+  
+  blob_properties {
+    delete_retention_policy {
+      days = 7
+    }
+  }
 }
