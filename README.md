@@ -196,3 +196,4 @@ Optional:
 
 
 This repository has used [github actions course](https://github.com/HoussemDellai/github-actions-course) repository as reference from Houssem Dellai. 
+In case of questions or concerns, users are encouraged to contact the project author before proceeding with implementation.
