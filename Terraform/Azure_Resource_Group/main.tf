@@ -27,13 +27,11 @@ resource "azurerm_storage_account" "insecure" {
     }
   }
 
-  # CKV2_AZURE_47
-  shared_access_key_enabled = false
-  /* CKV2_AZURE_41. This characteristic is enabled by default and should be configured like this:
+  # CKV2_AZURE_41. This characteristic is enabled by default and should be configured like this:
   shared_access_key_enabled = true
   sas_policy {
-    expiration_period = "01.12:00:00"
-  }*/
+    expiration_period = "07.00:00:00"
+  }
 }
 
 
