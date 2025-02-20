@@ -19,7 +19,9 @@ resource "azurerm_storage_account" "insecure" {
 
   public_network_access_enabled = false
   min_tls_version = var.min_tls_version
-  allow_nested_items_to_be_public = false # CKV_AZURE_190
+  
+  #allow_nested_items_to_be_public = false # CKV_AZURE_190
+  # Actually, it's not supported at false. Pipeline explodes
   
   blob_properties {
     delete_retention_policy {
