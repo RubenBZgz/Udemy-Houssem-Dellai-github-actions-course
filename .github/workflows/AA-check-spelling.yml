@@ -1,4 +1,7 @@
 name: AA-Check-GitHub-Actions-spelling
+
+permissions: read-all
+
 on: # rebuild any PRs and main branch changes
   workflow_dispatch: # allow manual trigger
   workflow_call: #Allow you to use this workflow in another WF

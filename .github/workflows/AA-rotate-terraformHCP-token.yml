@@ -1,5 +1,7 @@
 name: AA-rotate-terraformHCP-token
 
+permissions: read-all
+
 on:
   schedule:
     - cron: "0 */12 * * *" # Se ejecuta al inicio de cada hora
