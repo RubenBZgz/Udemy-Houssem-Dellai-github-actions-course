@@ -1,4 +1,3 @@
-#id-token: write
 name: Microsoft Defender for DevOps
 
 on:
@@ -31,7 +30,7 @@ jobs:
       with:
         sarif_file: ${{steps.msdo.outputs.sarifFile }}
 
-       #Upload alerts file as a workflow artifact
+     # Upload alerts file as a workflow artifact
     - name: Upload alerts file as a workflow artifact
       uses: actions/upload-artifact@main
       with:

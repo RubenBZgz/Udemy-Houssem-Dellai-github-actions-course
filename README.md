@@ -1,4 +1,4 @@
-# Azure Terraform DevOps
+# Azure Terraform DevOps Pipelines
 This is a CI/CD proyect using Terraform and GitHub actions. 
 The objective of this proyect is to provide a professional IAC deployment using best practices
 and ensuring the security.
@@ -196,3 +196,4 @@ Optional:
 
 
 This repository has used [github actions course](https://github.com/HoussemDellai/github-actions-course) repository as reference from Houssem Dellai. 
+In case of questions or concerns, users are encouraged to contact the project author before proceeding with implementation.
