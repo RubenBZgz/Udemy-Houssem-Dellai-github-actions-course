@@ -64,7 +64,7 @@ jobs:
 
       - name: Login to Azure with Service Principal
         uses: Azure/login@v2
-        if: ${{ (inputs.AZURE_LOGIN == 'SERVICE_PRINCIPAL') || ( (inputs.AZURE_LOGIN == 'None' || inputs.AZURE_LOGIN == '') && env.DEFAULT_AZURE_LOGIN == 'SERVICE_PRINCIPAL') }}
+        if: ${{ env.DEFAULT_AZURE_LOGIN == 'SERVICE_PRINCIPAL' }}
         with:
           auth-type: SERVICE_PRINCIPAL
           creds: ${{ secrets.AZURE_CREDENTIALS }}  # Uses the AZURE_CREDENTIALS secret for login
@@ -72,7 +72,7 @@ jobs:
 
         # Login with OIDC. https://github.com/Azure/login?tab=readme-ov-file#login-with-openid-connect-oidc-recommended
       - uses: azure/login@v2
-        if: ${{ (inputs.AZURE_LOGIN == 'OIDC') || ( (inputs.AZURE_LOGIN == 'None' || inputs.AZURE_LOGIN == '') && env.DEFAULT_AZURE_LOGIN == 'OIDC') }}
+        if: ${{ env.DEFAULT_AZURE_LOGIN == 'OIDC' }}
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
