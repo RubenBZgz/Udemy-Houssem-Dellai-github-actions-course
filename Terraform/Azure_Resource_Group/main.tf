@@ -35,3 +35,18 @@ resource "azurerm_storage_account" "insecure" {
     expiration_period = "01.12:00:00"
   }*/
 }
+
+
+# CKV_AZURE_190. Ensure Storage logging is enabled for Queue service for read, write and delete requests
+# queue_properties can only be configured when account_tier is set to Standard and account_kind is set to either Storage or StorageV2
+resource "azurerm_storage_account_queue_properties" "example" {
+  storage_account_id = azurerm_storage_account.example.id
+  logging {
+    version               = "2.0"
+    delete                = true
+    read                  = true
+    write                 = true
+    retention_policy_days = 7
+  }
+
+}
