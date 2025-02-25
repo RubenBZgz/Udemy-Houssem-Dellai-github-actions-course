@@ -17,11 +17,22 @@ variable "min_tls_version" {
   default     = "TLS1_2"
 }
 
+variable "account_replication_type" {
+  description = "Replication type for the storage account"
+  type        = string
+  default     = "LRS"
+}
+
 
 # RESOURCE VARIABLES
 variable "resource_group_name" {
   type        = string
   description = "resource_group_name"
-  default     = "rg-containerapps-github-actions-2"
+  default     = "02storageaccount"
 }
 
+variable "storage_account_name" {
+  type        = string
+  description = "storage_account_name"
+  default     = "02storageaccounts"
+}

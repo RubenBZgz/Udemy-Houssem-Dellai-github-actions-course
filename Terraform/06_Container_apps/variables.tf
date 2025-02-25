@@ -16,23 +16,23 @@ variable "location" {
 variable "resource_group_name" {
   type        = string
   description = "resource_group_name"
-  default     = "rg-containerapps-github-actions"
+  default     = "06containerapps"
 }
 
 variable "log_analytics_workspace_name" {
   type        = string
   description = "Resource location"
-  default     = "workspace-rgcontainerappsgithubactionsPt"
+  default     = "06containerapps"
 }
 
 variable "container_app_environment_name" {
   type        = string
   description = "Resource location"
-  default     = "aca-environment"
+  default     = "containerapps"
 }
 
 variable "container_app_name" {
   type        = string
   description = "Resource location"
-  default     = "album-backend-api"
+  default     = "containerapps"
 }

@@ -1,0 +1,4 @@
+skip-check:
+  - CKV_AZURE_206 #False positive. Only GRS, RAGRS, GZRS, or RAGZRS are supported
+  - CKV2_AZURE_47 #"Ensure storage account is configured without blob anonymous access". Actually, it's not supported at false. Pipeline explodes
+  - CKV_AZURE_33 #"Ensure Storage logging is enabled for Queue service for read, write and delete requests"

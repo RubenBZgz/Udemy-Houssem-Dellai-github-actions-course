@@ -14,11 +14,10 @@
 
 # Backend files 
 backend.tf
-backend.tfvars
 terraform.tfvars
-*.tfvars
 
-
+# Output
+outputs.tf
 
 # Private Keys or Sensitive Files
 *.pem

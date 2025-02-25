@@ -56,7 +56,7 @@ jobs:
     strategy:
       max-parallel: 1  # Limits to one concurrent job. Avoid stafe file lock
       matrix:
-        project: [07_Azure_Container_Apps, Azure_Resource_Group] # List of project folders
+        project: [06-container-apps, 02-storage-account] # List of project folders
 
     steps:
       - name: Checkout
