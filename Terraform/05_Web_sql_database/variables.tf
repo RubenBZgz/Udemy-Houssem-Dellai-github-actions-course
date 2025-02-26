@@ -11,10 +11,16 @@ variable "location" {
   default     = "West Europe"
 }
 
-variable "min_tls_version" {
+variable "min_tls_version_storage_account" {
   description = "The minimum TLS version for the storage account"
   type        = string
   default     = "TLS1_2"
+}
+
+variable "min_tls_version_sql_server" {
+  description = "The minimum TLS version for the storage account"
+  type        = string
+  default     = "1.2"
 }
 
 variable "account_replication_type" {
@@ -63,4 +69,11 @@ variable "sql_admin_login" {
 variable "sql_admin_password" {
   type        = string
   description = "SQL Server password name in Azure"
+}
+
+## Storage Account
+variable "storage_account_name" {
+  type        = string
+  description = "storage_account_name"
+  default     = "05websqldatabases"
 }

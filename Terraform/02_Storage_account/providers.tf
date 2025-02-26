@@ -20,3 +20,7 @@ provider "azurerm" {
 #az account set --subscription <subscription_id>
 #terraform login
 #You are ready to use terraform in your local machine
+
+#terraform -chdir=Terraform\02_Storage_account\ init
+#checkov -d .\Terraform\02_Storage_account\
+#tfsec .\Terraform\02_Storage_account\
