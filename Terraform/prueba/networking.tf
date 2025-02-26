@@ -24,7 +24,7 @@ resource "azurerm_subnet_network_security_group_association" "example" {
 }
 
 # CKV2_AZURE_33: "Ensure storage account is configured with private endpoint"
-/*resource "azurerm_private_endpoint" "blob" {
+resource "azurerm_private_endpoint" "blob" {
   name                = "prueba-blob-endpoint"
   location            = azurerm_resource_group.example.location
   resource_group_name = azurerm_resource_group.example.name
@@ -34,10 +34,11 @@ resource "azurerm_subnet_network_security_group_association" "example" {
     name                           = "example-privateserviceconnection"
     private_connection_resource_id = azurerm_storage_account.example.id
     is_manual_connection           = false
+    # Some resource types (such as Storage Account) only support 1 subresource per private endpoint.
     subresource_names             = ["blob"]   # This is required!
-    #subresource_names             = ["blob","table","queue","file","web","dfs"]   # This is required!
+    #subresource_names             = ["blob","table","queue","file","web","dfs"]   # Available values
   }
-}*/
+}
 
 /*
 resource "azurerm_private_endpoint" "queue" {

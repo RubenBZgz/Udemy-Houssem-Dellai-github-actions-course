@@ -10,15 +10,12 @@ resource "azurerm_storage_account" "example" {
   account_tier             = "Standard"
   account_replication_type = var.account_replication_type #CKV_AZURE_206. False positive. Only GRS, RAGRS, GZRS, or RAGZRS are supported
   https_traffic_only_enabled    = true
+  min_tls_version               = var.min_tls_version 
 
   # Security fixes
   # When public_network_access_enabled is false, you cannot access the resource with the service principal, so
   public_network_access_enabled = true # CKV_AZURE_59: "Ensure that Storage accounts disallow public access". If you don't activate this, you cannot create table and queue services. 
-  
-
-  min_tls_version               = var.min_tls_version 
-  allow_nested_items_to_be_public = true # CKV_AZURE_190: "Ensure that Storage blobs restrict public access"
-  # Actually, it's not supported at false. Pipeline explodes
+  allow_nested_items_to_be_public = false # CKV_AZURE_190: "Ensure that Storage blobs restrict public access"
 
   blob_properties {
     delete_retention_policy {

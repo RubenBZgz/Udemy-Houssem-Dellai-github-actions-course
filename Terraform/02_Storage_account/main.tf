@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "example" {
   name     = var.resource_group_name
-  location = var.location
+  location = "West Europe"
 }
 
 resource "azurerm_storage_account" "example" {
@@ -10,12 +10,12 @@ resource "azurerm_storage_account" "example" {
   account_tier             = "Standard"
   account_replication_type = var.account_replication_type #CKV_AZURE_206. False positive. Only GRS, RAGRS, GZRS, or RAGZRS are supported
   https_traffic_only_enabled    = true
+  min_tls_version               = var.min_tls_version 
 
   # Security fixes
+  # When public_network_access_enabled is false, you cannot access the resource with the service principal, so
   public_network_access_enabled = true # CKV_AZURE_59: "Ensure that Storage accounts disallow public access". If you don't activate this, you cannot create table and queue services. 
-  min_tls_version               = var.min_tls_version #CKV_AZURE_44: "Ensure Storage Account is using the latest version of TLS encryption"
-  allow_nested_items_to_be_public = true # CKV2_AZURE_47: "Ensure storage account is configured without blob anonymous access"
-  # Actually, it's not supported at false. Pipeline explodes
+  allow_nested_items_to_be_public = false # CKV_AZURE_190: "Ensure that Storage blobs restrict public access"
 
   blob_properties {
     delete_retention_policy {
@@ -38,30 +38,11 @@ resource "azurerm_storage_container" "container" {
   container_access_type = "private" # "container" "blob". Anonymous readd acess for containers and/or blobs or not allowed.
 }
 
-/*
-resource "azurerm_storage_blob" "example" {
-  name                   = "my-awesome-content.zip"
-  storage_account_name   = azurerm_storage_account.example.name
-  storage_container_name = azurerm_storage_container.example.name
-  type                   = "Block"
-  source                 = "some-local-file.zip"
-}
-*/
-
-
-
 resource "azurerm_storage_share" "example" {
   name               = "sharename"
   storage_account_id = azurerm_storage_account.example.id
   quota              = 50
 }
-
-/*
-resource "azurerm_storage_share_file" "example" {
-  name             = "my-awesome-content.zip"
-  storage_share_id = azurerm_storage_share.example.id
-  source           = "some-local-file.zip"
-}*/
 
 resource "azurerm_storage_queue" "example" {
   name                 = "myqueue"
@@ -70,20 +51,22 @@ resource "azurerm_storage_queue" "example" {
 
 #If you want to enable azure table, you need to change public_network_access_enabled to true
 resource "azurerm_storage_table" "example" {
+  count                = azurerm_storage_account.example.public_network_access_enabled ? 1 : 0
   name                 = "mysampletable"
   storage_account_name = azurerm_storage_account.example.name
 }
 
+/*
 # CKV_AZURE_190. Ensure Storage logging is enabled for Queue service for read, write and delete requests
 resource "azurerm_storage_account_queue_properties" "example" {
   storage_account_id = azurerm_storage_account.example.id
-  /*cors_rule {
+  cors_rule {
     allowed_origins    = ["http://www.example.com"]
     exposed_headers    = ["x-tempo-*"]
     allowed_headers    = ["x-tempo-*"]
     allowed_methods    = ["GET", "PUT"]
     max_age_in_seconds = "500"
-  }*/
+  }
 
   logging {
     version               = "1.0"
@@ -102,4 +85,6 @@ resource "azurerm_storage_account_queue_properties" "example" {
     version               = "1.0"
     retention_policy_days = 7
   }
-}
+}*/
+
+

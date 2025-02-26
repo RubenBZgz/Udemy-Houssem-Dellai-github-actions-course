@@ -28,11 +28,11 @@ variable "account_replication_type" {
 variable "resource_group_name" {
   type        = string
   description = "resource_group_name"
-  default     = "pruebademorg"
+  default     = "02storageaccount"
 }
 
 variable "storage_account_name" {
   type        = string
   description = "storage_account_name"
-  default     = "pruebaaccstg"
+  default     = "02storageaccounts"
 }
